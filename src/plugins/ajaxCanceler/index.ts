@@ -36,7 +36,7 @@ export const removeCancelerPlugin: ComposePlugin<AjaxResponse, AjaxConfig> = asy
   }
 
   return delay.catch((error) => {
-    if (error.message.startsWith('Cancel'))
+    if (error?.message?.startsWith('Cancel'))
       // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({ cancel: true, ...error })
 
