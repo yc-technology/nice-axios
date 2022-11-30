@@ -50,9 +50,10 @@ const plugins = [
  * @returns
  */
 export const createNiceAxios = (customPlugins: AjaxPluginFullConfig[] = [], options?: NiceAxiosOptions) => {
-  if (instance)
-    throw new Error('the nice_axios instance is created')
-
+  if (instance) {
+    console.warn('the nice_axios instance is created')
+    return
+  }
   niceAxiosOptions = options
   instance = new AjaxContainer([...plugins, ...customPlugins])
   return instance

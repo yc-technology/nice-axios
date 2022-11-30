@@ -1,4 +1,4 @@
-import { isString } from 'lodash-es'
+import { isString, isUndefined } from 'lodash-es'
 import { getNiceAxiosOptions } from '..'
 import type { AjaxConfig, AjaxPlugin, AjaxResponse, ComposePlugin, Func1 } from '../types'
 import { AjaxMethods } from '../types'
@@ -19,8 +19,12 @@ export const buildBeforePlugin: AjaxPlugin = (next, originalConfig) => {
 
   // initialize meta data
   if (!config.meta)
-    config.meta = {}
+    config.meta = { showErrorTip: true }
   const { meta } = config
+
+  // default showErrorTip: true
+  if (isUndefined(config.meta.showErrorTip))
+    config.meta.showErrorTip = true
 
   const { joinPrefix } = meta
   const { prefixURL, baseURL = '/' } = getNiceAxiosOptions() || {}

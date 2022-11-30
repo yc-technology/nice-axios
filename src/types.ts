@@ -30,6 +30,20 @@ export interface BusinessAjaxResult extends ComplexObject {
   message: string
 }
 
+export interface InnerError {
+  code: string | number
+  message: string
+  response?: {
+    status: number
+    data?: {
+      message: string
+      [key: string]: any
+    }
+    [key: string]: any
+  }
+  [key: string]: any
+}
+
 export interface AjaxAfterOptions {
   /**
    * 成功的指示状态码
@@ -45,14 +59,14 @@ export interface AjaxAfterOptions {
   /**
    * 根据不同的错误码和描述信息执行某些操作，属于业务异常的处理都在这里订阅
    */
-  checkErrorCode: Action3<string | number, string, BusinessAjaxResult>
+  checkErrorCode: Action4<string | number, string, BusinessAjaxResult, AjaxConfigMeta | undefined>
   /**
    * 根据不同的 HTTP 状态码和描述信息执行某些操作：
    * 额外的特殊状态码，由组件库定义：
    * :timeout => 表示超时
    * :networkError => 表示网络异常
    */
-  checkHttpErrorCode: Action2<string | number, string>
+  checkHttpErrorCode: Action2<InnerError | string, AjaxConfigMeta | undefined>
 }
 
 export interface AjaxConfigMeta extends ComplexObject {
@@ -61,6 +75,7 @@ export interface AjaxConfigMeta extends ComplexObject {
   joinPrefix?: boolean
   isTransformRequestResult?: boolean
   allReturn?: boolean
+  showErrorTip?: boolean
   // merge request
   merge?: boolean
 }

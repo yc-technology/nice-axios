@@ -1,19 +1,7 @@
 import { getNiceAxiosOptions } from '..'
-import type { AjaxAfterOptions, AjaxConfigMeta, AjaxPlugin, AjaxResponse, ComposeResult } from '../types'
+import type { AjaxAfterOptions, AjaxConfigMeta, AjaxPlugin, AjaxResponse, ComposeResult, InnerError } from '../types'
 
 import { errorResultNull } from './constants'
-import { checkStatus } from './utils'
-
-interface InnerError {
-  code: string | number
-  message: string
-  response?: {
-    status: number
-    data?: {
-      message: string
-    }
-  }
-}
 
 const handleSuccess = (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAfterOptions) => {
   const { isTransformRequestResult = true, allReturn } = meta
@@ -38,22 +26,22 @@ const handleSuccess = (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAf
   if (code === (options?.successCode || 200))
     return data as AjaxResponse
 
-  options?.checkErrorCode(code, message, result)
+  options?.checkErrorCode(code, message, result, meta)
   return Promise.reject(new Error(result))
 }
 
-const handleError = (error: InnerError, options?: AjaxAfterOptions) => {
-  const { response, code, message } = error || {}
-  const msg: string = response && response.data && response.data ? response.data.message : ''
+const handleError = (error: InnerError, options?: AjaxAfterOptions, meta?: AjaxConfigMeta) => {
+  const { code, message } = error || {}
   const err: string = error.toString()
 
   if (code === 'ECONNABORTED' && message.includes('timeout'))
-    options?.checkHttpErrorCode(':timeout', '接口请求超时,请刷新页面重试!')
+    options?.checkHttpErrorCode(':timeout', meta)
 
   if (err && err.includes('Network Error'))
-    options?.checkHttpErrorCode(':networkError', '请检查您的网络连接是否正常!')
+    options?.checkHttpErrorCode(':networkError', meta)
 
-  checkStatus(response ? response.status : -1, msg, options?.checkHttpErrorCode)
+  options?.checkHttpErrorCode && options.checkHttpErrorCode(error, meta)
+
   return Promise.reject(error)
 }
 
@@ -71,6 +59,6 @@ export const buildAfterPlugin: AjaxPlugin = (next, config) => {
 
   return delay.then(
     v => handleSuccess(v, config.meta || {}, afterPluginOption),
-    e => handleError(e as InnerError, afterPluginOption),
+    e => handleError(e as InnerError, afterPluginOption, config.meta),
   ) as ComposeResult<AjaxResponse>
 }
