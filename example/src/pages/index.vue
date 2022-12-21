@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { pageQueryAllMomentApi } from '~/apis/demo';
+import { pageQueryAllMomentApi,uploadFileApi } from '~/apis/demo';
 
 const user = useUserStore()
 const name = $ref(user.savedName)
@@ -14,6 +14,10 @@ const { t } = useI18n()
 
 const onFetchTest = async () => {
     await pageQueryAllMomentApi({format: 'json'})
+}
+
+const onUploadClick = async () => {
+    await uploadFileApi('dddd')
 }
 
 </script>
@@ -61,6 +65,7 @@ const onFetchTest = async () => {
       </button>
 
       <button @click="onFetchTest">点击fetch</button>
+      <button @click="onUploadClick">点击上传</button>
     </div>
   </div>
 </template>

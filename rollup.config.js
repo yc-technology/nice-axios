@@ -39,7 +39,12 @@ export default [
     },
     external: [],
     plugins: [
-      dts({ respectExternal: true }),
+      dts({
+        respectExternal: true,
+        compilerOptions: {
+          preserveSymlinks: false,
+        },
+      }),
     ],
   })),
 ]

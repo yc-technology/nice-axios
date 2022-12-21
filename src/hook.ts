@@ -59,7 +59,7 @@ export const buildHook = <TResult = any, TParams extends ComplexObject = any, TD
   })
 
   const agent = new AjaxHookInstance<TResult, TParams, TData>(getNiceAxiosInstance().attach([cancelAjax]), config)
-  return (data: TData) => {
-    return agent.exec({ data })
+  return (data: TData, options?: TAjaxConfig<TParams, TData>) => {
+    return agent.exec({ data, ...options })
   }
 }

@@ -37,6 +37,10 @@ export class AjaxContainer {
     return this.send<T>({ ...option, method: AjaxMethods.GET, url }, plugins)
   }
 
+  put<T>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+    return this.send<T>({ ...option, method: AjaxMethods.PUT, url }, plugins)
+  }
+
   post<T>(
     url: string,
     option: AjaxConfig = {},
@@ -82,5 +86,9 @@ export class AjaxContainer {
       // @ts-ignore
       return this.$agent.attach(callback).then(v => (this.$agent = v))
     }
+  }
+
+  getAgent() {
+    return this.$agent
   }
 }
