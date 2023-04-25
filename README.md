@@ -6,10 +6,9 @@ the onion model of axios by @django
 
 - Tree-shakable ESM
 - Fully typed - with TSDocs
-- Type utilities - `Arrayable<T>`, `ElementOf<T>`, etc.
 
 > This package is designed to be used as `devDependencies` and bundled into your dist.
 
 ## License
 
-[MIT](./LICENSE) License © 2022 [Django](https://github.com/SixDjango)
+[MIT](./LICENSE) License © 2023 [Django](https://github.com/sixdjango)
