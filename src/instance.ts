@@ -6,27 +6,28 @@ import type { AjaxPluginFullConfig, NiceAxiosOptions } from '.'
 
 let instance: AjaxContainer
 
-let niceAxiosOptions: NiceAxiosOptions | undefined
-
 // step 20
-const plugins = [
-  // 越小越前面
 
-  // pre plugins
-  { desc: '添加当前 Ajax 请求的手动取消功能：应该在所有插件中的第一个', order: -1040, executor: addCancelerPlugin },
-  { desc: '合并请求', order: -1020, executor: mergeRequestPlugin },
-  {
-    desc: '基础业务前置插件',
-    order: -1000,
-    executor: buildBeforePlugin,
-  },
+const getDefaultPlugins = (options?: NiceAxiosOptions) => {
+  return [
+    // 越小越前面
 
-  // order 越大，越早被执行
-  // post plugins
-  { desc: '通用后置逻辑', order: 1000, executor: buildAfterPlugin },
-  { desc: '移除当前请求的手动取消功能：应该在所有插件中的最后一个', order: 0, executor: removeCancelerPlugin },
+    // pre plugins
+    { desc: '添加当前 Ajax 请求的手动取消功能：应该在所有插件中的第一个', order: -1040, executor: addCancelerPlugin },
+    { desc: '合并请求', order: -1020, executor: mergeRequestPlugin },
+    {
+      desc: '基础业务前置插件',
+      order: -1000,
+      executor: buildBeforePlugin(options),
+    },
 
-]
+    // order 越大，越早被执行
+    // post plugins
+    { desc: '通用后置逻辑', order: 1000, executor: buildAfterPlugin(options) },
+    { desc: '移除当前请求的手动取消功能：应该在所有插件中的最后一个', order: 0, executor: removeCancelerPlugin },
+
+  ]
+}
 
 /**
  * the plugin's order ,not more than -1000 ~ 1000 range and step length of 20
@@ -50,12 +51,7 @@ const plugins = [
  * @returns
  */
 export const createNiceAxios = (customPlugins: AjaxPluginFullConfig[] = [], options?: NiceAxiosOptions) => {
-  if (instance) {
-    console.warn('the nice_axios instance is created')
-    return
-  }
-  niceAxiosOptions = options
-  instance = new AjaxContainer([...plugins, ...customPlugins])
+  instance = new AjaxContainer([...getDefaultPlugins(options), ...customPlugins])
   return instance
 }
 
@@ -63,13 +59,10 @@ export const createNiceAxios = (customPlugins: AjaxPluginFullConfig[] = [], opti
  * get nice_axios instance
  * @returns
  */
-export const getNiceAxiosInstance = () => {
+export const getNiceAxiosInstance = (customPlugins: AjaxPluginFullConfig[] = [], options?: NiceAxiosOptions) => {
   if (!instance)
-    throw new Error('the nice_axios instance is not created, please create first.')
+    instance = createNiceAxios(customPlugins, options)
 
   return instance
 }
 
-export const getNiceAxiosOptions = () => {
-  return niceAxiosOptions
-}

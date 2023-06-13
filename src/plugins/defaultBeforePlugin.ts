@@ -1,9 +1,9 @@
 import { isString, isUndefined } from 'lodash-es'
-import { getNiceAxiosOptions } from '..'
 import type { AjaxConfig, AjaxPlugin, AjaxResponse, ComposePlugin, Func1 } from '../types'
 import { AjaxMethods } from '../types'
 import { stringifyParams } from '../utils'
 
+import type { NiceAxiosOptions } from '../..'
 import { ContentTypeEnum } from './constants'
 import { getMultipartConfig, isHttpUrl } from './utils'
 
@@ -14,7 +14,7 @@ export interface AjaxBeforeOptions {
 
 export type BuildBeforePlugin = Func1<AjaxBeforeOptions, ComposePlugin<AjaxResponse, AjaxConfig>>
 
-export const buildBeforePlugin: AjaxPlugin = (next, originalConfig) => {
+export const buildBeforePlugin: (options?: NiceAxiosOptions) => AjaxPlugin = options => (next, originalConfig) => {
   let config = originalConfig
 
   // initialize meta data
@@ -27,7 +27,7 @@ export const buildBeforePlugin: AjaxPlugin = (next, originalConfig) => {
     config.meta.showErrorTip = true
 
   const { joinPrefix } = meta
-  const { prefixURL, baseURL = '/' } = getNiceAxiosOptions() || {}
+  const { prefixURL, baseURL = '/' } = options || {}
 
   if (!config.baseURL)
     config.baseURL = baseURL

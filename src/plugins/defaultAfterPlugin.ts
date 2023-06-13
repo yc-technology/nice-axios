@@ -1,4 +1,4 @@
-import { getNiceAxiosOptions } from '..'
+import type { NiceAxiosOptions } from '../..'
 import type { AjaxAfterOptions, AjaxConfigMeta, AjaxPlugin, AjaxResponse, ComposeResult, InnerError } from '../types'
 
 import { errorResultNull } from './constants'
@@ -45,8 +45,7 @@ const handleError = (error: InnerError, options?: AjaxAfterOptions, meta?: AjaxC
   return Promise.reject(error)
 }
 
-export const buildAfterPlugin: AjaxPlugin = (next, config) => {
-  const { afterPluginOption } = getNiceAxiosOptions() || {}
+export const buildAfterPlugin: (options?: NiceAxiosOptions) => AjaxPlugin = options => (next, config) => {
   const delay = new Promise<AjaxResponse>((resolve, reject) => {
     try {
       resolve(next())
@@ -58,7 +57,7 @@ export const buildAfterPlugin: AjaxPlugin = (next, config) => {
   })
 
   return delay.then(
-    v => handleSuccess(v, config.meta || {}, afterPluginOption),
-    e => handleError(e as InnerError, afterPluginOption, config.meta),
+    v => handleSuccess(v, config.meta || {}, options?.afterPluginOption),
+    e => handleError(e as InnerError, options?.afterPluginOption, config.meta),
   ) as ComposeResult<AjaxResponse>
 }
