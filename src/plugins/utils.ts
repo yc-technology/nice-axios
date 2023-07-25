@@ -1,5 +1,5 @@
-import { isString } from 'lodash-es'
-import type { Action2, AjaxConfig } from '../types'
+import { isFunction, isString } from 'lodash-es'
+import type { Action2, AjaxConfig, Func } from '../types'
 import { AjaxMethods } from '../types'
 import { ContentTypeEnum } from './constants'
 
@@ -87,4 +87,10 @@ export function checkStatus(status: number, msg: string, showMsg?: Action2<strin
     default:
       error('unknown')
   }
+}
+
+export const maybeFnCall = <T>(fn?: T | Func<T>) => {
+  if (isFunction(fn))
+    return fn()
+  return fn
 }

@@ -1,6 +1,6 @@
 {
   "name": "nice-axios",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "packageManager": "pnpm@7.0.1",
   "description": "the onion model of axios by @django",
   "keywords": [

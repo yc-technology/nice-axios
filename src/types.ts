@@ -21,6 +21,7 @@ export interface ComposePlugin<R, T> {
 export interface NiceAxiosOptions {
   baseURL?: string
   prefixURL?: string
+  name?: string
   afterPluginOption?: AjaxAfterOptions
 }
 

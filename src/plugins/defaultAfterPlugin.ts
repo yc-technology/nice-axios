@@ -1,7 +1,7 @@
-import type { NiceAxiosOptions } from '../..'
-import type { AjaxAfterOptions, AjaxConfigMeta, AjaxPlugin, AjaxResponse, ComposeResult, InnerError } from '../types'
+import type { AjaxAfterOptions, AjaxConfigMeta, AjaxPlugin, AjaxResponse, ComposeResult, Func, InnerError, NiceAxiosOptions } from '../types'
 
 import { errorResultNull } from './constants'
+import { maybeFnCall } from './utils'
 
 const handleSuccess = (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAfterOptions) => {
   const { isTransformRequestResult = true, allReturn } = meta
@@ -45,7 +45,8 @@ const handleError = (error: InnerError, options?: AjaxAfterOptions, meta?: AjaxC
   return Promise.reject(error)
 }
 
-export const buildAfterPlugin: (options?: NiceAxiosOptions) => AjaxPlugin = options => (next, config) => {
+export const buildAfterPlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => AjaxPlugin = options => (next, config) => {
+  const initOptions = maybeFnCall(options)
   const delay = new Promise<AjaxResponse>((resolve, reject) => {
     try {
       resolve(next())
@@ -57,7 +58,7 @@ export const buildAfterPlugin: (options?: NiceAxiosOptions) => AjaxPlugin = opti
   })
 
   return delay.then(
-    v => handleSuccess(v, config.meta || {}, options?.afterPluginOption),
-    e => handleError(e as InnerError, options?.afterPluginOption, config.meta),
+    v => handleSuccess(v, config.meta || {}, initOptions?.afterPluginOption),
+    e => handleError(e as InnerError, initOptions?.afterPluginOption, config.meta),
   ) as ComposeResult<AjaxResponse>
 }

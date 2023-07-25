@@ -2,13 +2,13 @@ import { AjaxContainer } from './container'
 import { addCancelerPlugin, removeCancelerPlugin } from './plugins/ajaxCanceler'
 import { mergeRequestPlugin } from './plugins/mergeRequestPlugin'
 import { buildAfterPlugin, buildBeforePlugin } from '.'
-import type { AjaxPluginFullConfig, NiceAxiosOptions } from '.'
+import type { AjaxPluginFullConfig, Func, NiceAxiosOptions } from '.'
 
 let instance: AjaxContainer
 
 // step 20
 
-const getDefaultPlugins = (options?: NiceAxiosOptions) => {
+const getDefaultPlugins = (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => {
   return [
     // 越小越前面
 
@@ -50,7 +50,7 @@ const getDefaultPlugins = (options?: NiceAxiosOptions) => {
  * @param options
  * @returns
  */
-export const createNiceAxios = (customPlugins: AjaxPluginFullConfig[] = [], options?: NiceAxiosOptions) => {
+export const createNiceAxios = (customPlugins: AjaxPluginFullConfig[] = [], options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => {
   instance = new AjaxContainer([...getDefaultPlugins(options), ...customPlugins])
   return instance
 }
@@ -59,7 +59,7 @@ export const createNiceAxios = (customPlugins: AjaxPluginFullConfig[] = [], opti
  * get nice_axios instance
  * @returns
  */
-export const getNiceAxiosInstance = (customPlugins: AjaxPluginFullConfig[] = [], options?: NiceAxiosOptions) => {
+export const getNiceAxiosInstance = (customPlugins: AjaxPluginFullConfig[] = [], options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => {
   if (!instance)
     instance = createNiceAxios(customPlugins, options)
 

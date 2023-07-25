@@ -17,13 +17,6 @@ export class AjaxContainer {
 
   constructor(plugins: AjaxPluginConfig[] = []) {
     this.$agent = ajax(plugins)
-
-    this.get = this.get.bind(this)
-    this.post = this.post.bind(this)
-    this.send = this.send.bind(this)
-    this.attach = this.attach.bind(this)
-    this.upload = this.upload.bind(this)
-    this.download = this.download.bind(this)
   }
 
   send<T>(option: AjaxConfig = {}, plugins: AjaxPluginConfig[]): Promise<T> {
@@ -35,6 +28,10 @@ export class AjaxContainer {
 
   get<T>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
     return this.send<T>({ ...option, method: AjaxMethods.GET, url }, plugins)
+  }
+
+  delete<T>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+    return this.send<T>({ ...option, method: AjaxMethods.DELETE, url }, plugins)
   }
 
   put<T>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {

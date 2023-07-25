@@ -1,11 +1,10 @@
 import { isString, isUndefined } from 'lodash-es'
-import type { AjaxConfig, AjaxPlugin, AjaxResponse, ComposePlugin, Func1 } from '../types'
+import type { AjaxConfig, AjaxPlugin, AjaxResponse, ComposePlugin, Func, Func1, NiceAxiosOptions } from '../types'
 import { AjaxMethods } from '../types'
 import { stringifyParams } from '../utils'
 
-import type { NiceAxiosOptions } from '../..'
 import { ContentTypeEnum } from './constants'
-import { getMultipartConfig, isHttpUrl } from './utils'
+import { getMultipartConfig, isHttpUrl, maybeFnCall } from './utils'
 
 export interface AjaxBeforeOptions {
   apiUrl?: string
@@ -14,8 +13,9 @@ export interface AjaxBeforeOptions {
 
 export type BuildBeforePlugin = Func1<AjaxBeforeOptions, ComposePlugin<AjaxResponse, AjaxConfig>>
 
-export const buildBeforePlugin: (options?: NiceAxiosOptions) => AjaxPlugin = options => (next, originalConfig) => {
+export const buildBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => AjaxPlugin = options => (next, originalConfig) => {
   let config = originalConfig
+  const initOptions = maybeFnCall(options)
 
   // initialize meta data
   if (!config.meta)
@@ -27,7 +27,7 @@ export const buildBeforePlugin: (options?: NiceAxiosOptions) => AjaxPlugin = opt
     config.meta.showErrorTip = true
 
   const { joinPrefix } = meta
-  const { prefixURL, baseURL = '/' } = options || {}
+  const { prefixURL, baseURL = '/' } = initOptions || {}
 
   if (!config.baseURL)
     config.baseURL = baseURL
