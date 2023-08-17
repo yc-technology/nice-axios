@@ -65,23 +65,24 @@ export class AjaxContainer {
     })
   }
 
-  attach(
+  async attach(
     callback:
     | ((list: AjaxPluginConfig[]) => ComposeResult<AjaxPluginConfig[]>)
     | AjaxPluginConfig[],
   ) {
     if (isArray(callback)) {
       if (callback.length) {
-        return this.$agent
-        // @ts-ignore
-          .attach(list => list.concat(callback))
-          .then(v => (this.$agent = v))
+        const v = await this.$agent
+          // @ts-ignore
+          .attach(list_1 => list_1.concat(callback))
+        return (this.$agent = v)
       }
       return Promise.resolve(this.$agent)
     }
     else {
       // @ts-ignore
-      return this.$agent.attach(callback).then(v => (this.$agent = v))
+      const v_1 = await this.$agent.attach(callback)
+      return (this.$agent = v_1)
     }
   }
 

@@ -1,6 +1,4 @@
-import { onDeactivated, onUnmounted } from 'vue'
 import type { AjaxAgent, AjaxConfig, AjaxPlugin, ComplexObject, TAjaxConfig } from './types'
-import { getNiceAxiosInstance } from './instance'
 
 export class AjaxHookInstance<TResult, TParams extends ComplexObject, TData extends ComplexObject> implements AjaxHookInstance<TResult, TParams, TData> {
   private config: TAjaxConfig<TParams, TData>
@@ -38,28 +36,28 @@ export class AjaxHookInstance<TResult, TParams extends ComplexObject, TData exte
   }
 }
 
-export const buildHook = <TResult = any, TParams extends ComplexObject = any, TData extends ComplexObject = any>(
-  config: TAjaxConfig<TParams, TData> | string,
-) => {
-  let canceler: () => void
+// export const buildHook = <TResult = any, TParams extends ComplexObject = any, TData extends ComplexObject = any>(
+//   config: TAjaxConfig<TParams, TData> | string,
+// ) => {
+//   let canceler: () => void
 
-  const cancelAjax: AjaxPlugin = (next, config) => {
-    canceler = config.meta?.canceler
-    return next()
-  }
+//   const cancelAjax: AjaxPlugin = (next, config) => {
+//     canceler = config.meta?.canceler
+//     return next()
+//   }
 
-  onUnmounted(() => {
-    if (canceler)
-      canceler()
-  })
+//   onUnmounted(() => {
+//     if (canceler)
+//       canceler()
+//   })
 
-  onDeactivated(() => {
-    if (canceler)
-      canceler()
-  })
+//   onDeactivated(() => {
+//     if (canceler)
+//       canceler()
+//   })
 
-  const agent = new AjaxHookInstance<TResult, TParams, TData>(getNiceAxiosInstance().attach([cancelAjax]), config)
-  return (data: TData, options?: TAjaxConfig<TParams, TData>) => {
-    return agent.exec({ data, ...options })
-  }
-}
+//   const agent = new AjaxHookInstance<TResult, TParams, TData>(getNiceAxiosInstance().attach([cancelAjax]), config)
+//   return (data: TData, options?: TAjaxConfig<TParams, TData>) => {
+//     return agent.exec({ data, ...options })
+//   }
+// }
