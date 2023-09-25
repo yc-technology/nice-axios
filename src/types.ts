@@ -23,6 +23,7 @@ export interface NiceAxiosOptions {
   prefixURL?: string
   name?: string
   afterPluginOption?: AjaxAfterOptions
+  defaultMeta?: AjaxConfigMeta
 }
 
 export interface BusinessAjaxResult extends ComplexObject {

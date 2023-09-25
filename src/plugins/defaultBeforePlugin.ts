@@ -15,12 +15,17 @@ export type BuildBeforePlugin = Func1<AjaxBeforeOptions, ComposePlugin<AjaxRespo
 
 export const buildBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => AjaxPlugin = options => (next, originalConfig) => {
   let config = originalConfig
-  const initOptions = maybeFnCall(options)
-
+  const initOptions = maybeFnCall(options) || {}
+  const { defaultMeta = {} } = initOptions
   // initialize meta data
   if (!config.meta)
     config.meta = { showErrorTip: true }
-  const { meta } = config
+  const meta = config.meta
+  // merge defaultMeta
+  Object.keys(defaultMeta).forEach((k) => {
+    if (isUndefined(meta[k]))
+      meta[k] = defaultMeta[k]
+  })
 
   // default showErrorTip: true
   if (isUndefined(config.meta.showErrorTip))
