@@ -80,6 +80,7 @@ export interface AjaxConfigMeta extends ComplexObject {
   showErrorTip?: boolean
   // merge request
   merge?: boolean
+  mergeTimeout?: number
 }
 
 export interface AjaxConfig extends AxiosRequestConfig {
