@@ -24,6 +24,5 @@
     "types": ["vitest"]
   },
   "compileOnSave": false,
-  "exclude": ["node_modules", "dist", "example"],
-  "include": ["./**/*.ts"]
+  "include": ["./src"]
 }
