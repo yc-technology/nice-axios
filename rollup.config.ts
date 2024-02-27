@@ -7,7 +7,7 @@ import pkg from './package.json'
 export default defineConfig({
   input: 'src/index.ts',
   plugins: [json(), typescript(), terser()],
-  external: ['axios', 'lodash-es', 'crypto-js'],
+  external: ['axios', 'lodash-es'],
   output: [
     {
       format: 'cjs',

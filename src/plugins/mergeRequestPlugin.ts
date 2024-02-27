@@ -1,16 +1,13 @@
-import crypto from 'crypto-js'
 import type { AjaxPlugin } from '..'
-import { sleep } from '../utils'
 import type { AjaxResponse, ComposeResult } from '../types'
+import { sleep } from '../utils'
 
 const requestPromise = new Map<string, ComposeResult<AjaxResponse>>()
 
 export const mergeRequestPlugin: AjaxPlugin = async (next, config) => {
   if (config.meta?.merge === false) return next()
 
-  const requestId = crypto.MD5(
-    `${config.url}${config.method}${JSON.stringify(config.data)}${JSON.stringify(config.params)}${config.meta}${config.headers}`,
-  )
+  const requestId = `${config.url}${config.method}${JSON.stringify(config.data)}${JSON.stringify(config.params)}${config.meta}${config.headers}`
   const exitPromise = requestPromise.get(requestId.toString())
   if (!exitPromise) {
     const promise = next()
