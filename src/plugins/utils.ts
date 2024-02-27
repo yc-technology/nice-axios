@@ -1,7 +1,6 @@
 import { isFunction, isString } from 'lodash-es'
 import type { Action2, AjaxConfig, Func } from '../types'
-import { AjaxMethods } from '../types'
-import { ContentTypeEnum } from './constants'
+import { ContentTypeEnum, AjaxMethods } from '../constants'
 
 export function getMultipartConfig(config: AjaxConfig) {
   const { data } = config

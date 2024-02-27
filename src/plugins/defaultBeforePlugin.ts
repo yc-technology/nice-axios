@@ -2,9 +2,8 @@ import { isString, isUndefined } from 'lodash-es'
 import type { AjaxConfig, AjaxPlugin, AjaxResponse, ComposePlugin, Func, Func1, NiceAxiosOptions } from '../types'
 import { stringifyParams } from '../utils'
 
-import { ContentTypeEnum } from './constants'
 import { getMultipartConfig, isHttpUrl, maybeFnCall } from './utils'
-import { AjaxMethods } from '~/constants'
+import { AjaxMethods, ContentTypeEnum } from '~/constants'
 
 export interface AjaxBeforeOptions {
   apiUrl?: string

@@ -9,7 +9,7 @@ import type {
   NiceAxiosOptions,
 } from '../types'
 
-import { errorResultNull } from './constants'
+import { errorResultNull } from '~/constants'
 import { maybeFnCall } from './utils'
 
 const handleSuccess = (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAfterOptions) => {
