@@ -33,7 +33,13 @@
     "axios",
     "vitest",
     "vitepress",
-    "typescript"
+    "typescript",
+    "react",
+    "vue",
+    "nodejs",
+    "nextjs",
+    "nice-axios",
+    "compose"
   ],
   "sideEffects": false,
   "scripts": {
