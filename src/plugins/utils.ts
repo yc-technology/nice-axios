@@ -7,8 +7,7 @@ export function getMultipartConfig(config: AjaxConfig) {
   const { data } = config
   const formData = new FormData()
 
-  if (isString(data))
-    throw new Error('getMultipartConfig: multi part can not be string.')
+  if (isString(data)) throw new Error('getMultipartConfig: multi part can not be string.')
 
   if (!(data instanceof FormData) && data) {
     Object.keys(data).forEach((key) => {
@@ -27,9 +26,8 @@ export function getMultipartConfig(config: AjaxConfig) {
   if (config.headers) {
     config.headers['Content-type'] = ContentTypeEnum.FORM_DATA
     config.headers.ignoreCancelToken = true
-  }
-  else {
-    config.headers = { 'Content-type': ContentTypeEnum.FORM_DATA, 'ignoreCancelToken': true }
+  } else {
+    config.headers = { 'Content-type': ContentTypeEnum.FORM_DATA, ignoreCancelToken: true }
   }
 
   config.method = AjaxMethods.POST
@@ -39,8 +37,7 @@ export function getMultipartConfig(config: AjaxConfig) {
 }
 
 export const isHttpUrl = (url?: string) => {
-  if (!url)
-    return false
+  if (!url) return false
   return url.startsWith('http')
 }
 
@@ -90,7 +87,6 @@ export function checkStatus(status: number, msg: string, showMsg?: Action2<strin
 }
 
 export const maybeFnCall = <T>(fn?: T | Func<T>) => {
-  if (isFunction(fn))
-    return fn()
+  if (isFunction(fn)) return fn()
   return fn
 }

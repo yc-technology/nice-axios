@@ -1,7 +1,6 @@
 export function stringifyParams(obj: any) {
   let parameters = ''
-  for (const key in obj)
-    parameters += `${key}=${encodeURIComponent(obj[key])}&`
+  for (const key in obj) parameters += `${key}=${encodeURIComponent(obj[key])}&`
 
   parameters = parameters.replace(/&$/, '')
   return parameters

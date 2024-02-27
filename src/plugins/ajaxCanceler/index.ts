@@ -11,11 +11,8 @@ export const addCancelerPlugin: ComposePlugin<AjaxResponse, AjaxConfig> = (next,
   const { headers: { ignoreCancelToken } = { ignoreCancelToken: false } } = config
   !ignoreCancelToken && axiosCanceler.addPending(config)
 
-  if (config.meta)
-    config.meta.canceler = () => axiosCanceler.removePending(config)
-
-  else
-    config.meta = { canceler: () => axiosCanceler.removePending(config) }
+  if (config.meta) config.meta.canceler = () => axiosCanceler.removePending(config)
+  else config.meta = { canceler: () => axiosCanceler.removePending(config) }
 
   return next()
 }
@@ -24,8 +21,7 @@ export const removeCancelerPlugin: ComposePlugin<AjaxResponse, AjaxConfig> = asy
   const delay = new Promise<AjaxResponse>((resolve, reject) => {
     try {
       resolve(next())
-    }
-    catch (e) {
+    } catch (e) {
       reject(e)
     }
   })

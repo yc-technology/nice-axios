@@ -6,10 +6,11 @@ import type { AjaxResponse, ComposeResult } from '../types'
 const requestPromise = new Map<string, ComposeResult<AjaxResponse>>()
 
 export const mergeRequestPlugin: AjaxPlugin = async (next, config) => {
-  if (config.meta?.merge === false)
-    return next()
+  if (config.meta?.merge === false) return next()
 
-  const requestId = crypto.MD5(`${config.url}${config.method}${JSON.stringify(config.data)}${JSON.stringify(config.params)}${config.meta}${config.headers}`)
+  const requestId = crypto.MD5(
+    `${config.url}${config.method}${JSON.stringify(config.data)}${JSON.stringify(config.params)}${config.meta}${config.headers}`,
+  )
   const exitPromise = requestPromise.get(requestId.toString())
   if (!exitPromise) {
     const promise = next()
@@ -21,8 +22,7 @@ export const mergeRequestPlugin: AjaxPlugin = async (next, config) => {
       })
       return result
     })
-  }
-  else {
+  } else {
     return exitPromise
     // return;
   }

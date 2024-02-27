@@ -8,7 +8,9 @@ export default defineConfig({
       '~': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+
   test: {
+    dir: 'tests',
     coverage: {
       reporter: ['text', 'json', 'html', 'json-summary'],
     },

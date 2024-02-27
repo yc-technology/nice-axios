@@ -1,14 +1,6 @@
-import type { AxiosRequestConfig } from 'axios'
+import type { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 
-export enum AjaxMethods {
-  GET = 'GET',
-  DELETE = 'DELETE',
-  HEAD = 'HEAD',
-  OPTIONS = 'OPTIONS',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-}
+export { AxiosResponse }
 
 export type ComplexObject = Record<string, any>
 
@@ -85,7 +77,7 @@ export interface AjaxConfigMeta extends ComplexObject {
 
 export interface AjaxConfig extends AxiosRequestConfig {
   url?: string
-  method?: AjaxMethods
+  method?: Method
   meta?: AjaxConfigMeta
   headers?: ComplexObject
   params?: string | ComplexObject | any
@@ -117,9 +109,7 @@ export interface AjaxExecutor {
 
 export interface AjaxAgent {
   add(list: AjaxPluginConfig[]): AjaxAgent
-  attach(
-    callback: (list: AjaxPluginConfig[]) => ComposeResult<AjaxPluginConfig[]>
-  ): Promise<AjaxAgent>
+  attach(callback: (list: AjaxPluginConfig[]) => ComposeResult<AjaxPluginConfig[]>): Promise<AjaxAgent>
   exec(args: AjaxConfig): Promise<AjaxResponse>
 }
 

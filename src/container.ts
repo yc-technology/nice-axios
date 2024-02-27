@@ -1,16 +1,8 @@
 import { isArray } from 'lodash-es'
 import { ajax } from './core'
-import type {
-  AjaxAgent,
-  AjaxConfig,
-  AjaxConfigMeta,
-  AjaxPluginConfig,
-  ComplexObject,
-  ComposeResult,
-} from './types'
-import {
-  AjaxMethods,
-} from './types'
+import type { AjaxAgent, AjaxConfig, AjaxConfigMeta, AjaxPluginConfig, ComplexObject, ComposeResult } from './types'
+import { AxiosResponse } from 'axios'
+import { AjaxMethods } from './constants'
 
 export class AjaxContainer {
   private $agent: AjaxAgent
@@ -19,45 +11,37 @@ export class AjaxContainer {
     this.$agent = ajax(plugins)
   }
 
-  send<T>(option: AjaxConfig = {}, plugins: AjaxPluginConfig[]): Promise<T> {
+  send<T = AxiosResponse>(option: AjaxConfig = {}, plugins: AjaxPluginConfig[]): Promise<T> {
     const { data, body, ...reset } = option
     return this.$agent
-      .attach(list => (plugins.length ? list.concat(plugins) : list))
-      .then(v => v.exec({ ...reset, data: body || data })) as Promise<T>
+      .attach((list) => (plugins.length ? list.concat(plugins) : list))
+      .then((v) => v.exec({ ...reset, data: body || data })) as Promise<T>
   }
 
-  get<T>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+  get<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
     return this.send<T>({ ...option, method: AjaxMethods.GET, url }, plugins)
   }
 
-  delete<T>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+  delete<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
     return this.send<T>({ ...option, method: AjaxMethods.DELETE, url }, plugins)
   }
 
-  put<T>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+  put<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
     return this.send<T>({ ...option, method: AjaxMethods.PUT, url }, plugins)
   }
 
-  post<T>(
-    url: string,
-    option: AjaxConfig = {},
-    ...plugins: AjaxPluginConfig[]
-  ) {
+  post<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
     return this.send<T>({ ...option, method: AjaxMethods.POST, url }, plugins)
   }
 
-  upload<T>(url: string, data: ComplexObject = {}, meta: AjaxConfigMeta = {}) {
+  upload<T = AxiosResponse>(url: string, data: ComplexObject = {}, meta: AjaxConfigMeta = {}) {
     return this.post<T>(url, {
       data,
       meta: { upload: true, aes: false, ...meta },
     })
   }
 
-  download<T>(
-    url: string,
-    data: ComplexObject = {},
-    meta: AjaxConfigMeta = {},
-  ) {
+  download<T>(url: string, data: ComplexObject = {}, meta: AjaxConfigMeta = {}) {
     return this.post<T>(url, {
       responseType: 'blob',
       data,
@@ -65,21 +49,16 @@ export class AjaxContainer {
     })
   }
 
-  async attach(
-    callback:
-    | ((list: AjaxPluginConfig[]) => ComposeResult<AjaxPluginConfig[]>)
-    | AjaxPluginConfig[],
-  ) {
+  async attach(callback: ((list: AjaxPluginConfig[]) => ComposeResult<AjaxPluginConfig[]>) | AjaxPluginConfig[]) {
     if (isArray(callback)) {
       if (callback.length) {
-        const v = await this.$agent
-          // @ts-ignore
-          .attach(list_1 => list_1.concat(callback))
+        // 构建新的插件列表
+        const v = await this.$agent.attach((list_1) => list_1.concat(callback))
+        // 重新赋值
         return (this.$agent = v)
       }
       return Promise.resolve(this.$agent)
-    }
-    else {
+    } else {
       // @ts-ignore
       const v_1 = await this.$agent.attach(callback)
       return (this.$agent = v_1)
