@@ -36,32 +36,35 @@ niceAxios.post()
 - Plugins
 
 ```js
+import { createNiceAxios } from 'nice-axios'
 
 const addTokenPlugin: AjaxPlugin = async (next, config) => {
+    // Execute before request
+    const token = 'test-token'
+    if (config?.headers) {
+      config.headers['xxx-TOKEN'] = token
+    }
 
-  // Execute before request
-  const token = localStorage.getItem('token')
-  config.headers['xxx-TOKEN'] = token
-
-  return next().then(() => {
-    // Execute after request
-  })
-}
-
-const plugins = [
-  // generate plugin instance
-  {
-    // When the value is approximately small, the observer will be executed earlier before the request. On the contrary, the larger the value, the earlier the observer will be executed after the request.
-    order: -100,
-    executor: addTokenPlugin,
-    description: 'add token'
+    return next(config).then((result: AxiosResponse) => {
+      // Execute after request
+      return result
+    })
   }
-]
 
-import { createNiceAxios } from 'nice-axios'
-const niceAxios = createNiceAxios(plugins,{...options})
+  const plugins: AjaxPluginFullConfig[] = [
+    // generate plugin instance
+    {
+      // When the value is approximately small, the observer will be executed earlier before the request. On the contrary, the larger the value, the earlier the observer will be executed after the request.
+      order: -100,
+      executor: addTokenPlugin,
+      desc: 'add token',
+    },
+  ]
 
-
+  const niceAxios = createNiceAxios(plugins)
+  const res = await niceAxios.get<AxiosResponse<string>>('https://httpd.apache.org/', {
+    // meta: { allReturn: true },
+  })
 ```
 
 - Option
