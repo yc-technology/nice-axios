@@ -14,9 +14,9 @@ the onion model of axios by @django
 - Install Dependency
 
 ```bash
-pnpm i nice-axios
+pnpm add nice-axios
 # or
-npm run nice-axios
+npm i nice-axios
 ```
 
 ## 🔍 Usage
@@ -48,8 +48,18 @@ const addTokenPlugin: AjaxPlugin = async (next, config) => {
   })
 }
 
+const plugins = [
+  // generate plugin instance
+  {
+    // When the value is approximately small, the observer will be executed earlier before the request. On the contrary, the larger the value, the earlier the observer will be executed after the request.
+    order: -100,
+    executor: addTokenPlugin,
+    description: 'add token'
+  }
+]
+
 import { createNiceAxios } from 'nice-axios'
-const niceAxios = createNiceAxios([addTokenPlugin],{...options})
+const niceAxios = createNiceAxios(plugins,{...options})
 
 
 ```
