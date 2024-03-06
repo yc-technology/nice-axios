@@ -4,6 +4,14 @@ import type { AjaxAgent, AjaxConfig, AjaxConfigMeta, AjaxPluginConfig, ComplexOb
 import { AxiosResponse } from 'axios'
 import { AjaxMethods } from './constants'
 
+const getOption = (option: AjaxConfig) => {
+  if ('data' in option) {
+    return option
+  }
+  // generate new option
+  return { data: option }
+}
+
 export class AjaxContainer {
   private $agent: AjaxAgent
 
@@ -19,19 +27,19 @@ export class AjaxContainer {
   }
 
   get<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
-    return this.send<T>({ ...option, method: AjaxMethods.GET, url }, plugins)
+    return this.send<T>({ ...getOption(option), method: AjaxMethods.GET, url }, plugins)
   }
 
   delete<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
-    return this.send<T>({ ...option, method: AjaxMethods.DELETE, url }, plugins)
+    return this.send<T>({ ...getOption(option), method: AjaxMethods.DELETE, url }, plugins)
   }
 
   put<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
-    return this.send<T>({ ...option, method: AjaxMethods.PUT, url }, plugins)
+    return this.send<T>({ ...getOption(option), method: AjaxMethods.PUT, url }, plugins)
   }
 
   post<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
-    return this.send<T>({ ...option, method: AjaxMethods.POST, url }, plugins)
+    return this.send<T>({ ...getOption(option), method: AjaxMethods.POST, url }, plugins)
   }
 
   upload<T = AxiosResponse>(url: string, data: ComplexObject = {}, meta: AjaxConfigMeta = {}) {
