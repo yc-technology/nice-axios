@@ -40,12 +40,7 @@ export const buildBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOpti
     if (!config.headers) config.headers = {}
 
     if (config.method === AjaxMethods.GET) {
-      if (!isString(config.params)) {
-        config.data = {
-          // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
-          params: { ...config.params, _t: Date.now() },
-        }
-      }
+      // some get request need to add timestamp to prevent cache
     } else {
       // initialize method, default value POST method
       if (!config.method) {

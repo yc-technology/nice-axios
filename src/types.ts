@@ -77,7 +77,7 @@ export interface AjaxConfigMeta extends ComplexObject {
 
 export interface AjaxConfig extends AxiosRequestConfig {
   url?: string
-  method?: Method
+  method?: Method | string
   meta?: AjaxConfigMeta
   headers?: ComplexObject
   params?: string | ComplexObject | any
