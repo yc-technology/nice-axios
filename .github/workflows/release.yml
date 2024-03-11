@@ -6,7 +6,10 @@ on:
       - 'main'
 
 jobs:
-  version-bump:
+  release:
+    permissions:
+      id-token: write
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,12 +31,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main # 或你使用的默认分支名称，比如 master
-  release:
-    permissions:
-      id-token: write
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
