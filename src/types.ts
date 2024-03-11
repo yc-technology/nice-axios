@@ -15,6 +15,18 @@ export interface NiceAxiosOptions {
   prefixURL?: string
   name?: string
   afterPluginOption?: AjaxAfterOptions
+
+  /**
+   * default: Authorization
+   * header key
+   */
+  authHeaderKeyField?: string
+  /**
+   * default: token
+   * local storage key
+   */
+  tokenKeyField?: string
+  getToken?: () => Promise<string> | string
   defaultMeta?: AjaxConfigMeta
 }
 
@@ -73,6 +85,7 @@ export interface AjaxConfigMeta extends ComplexObject {
   // merge request
   merge?: boolean
   mergeTimeout?: number
+  addToken?: boolean
 }
 
 export interface AjaxConfig extends AxiosRequestConfig {

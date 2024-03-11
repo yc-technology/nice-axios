@@ -43,7 +43,22 @@ test('test fetch date', async () => {
     },
   ]
 
-  const niceAxios = createNiceAxios(plugins)
+  const niceAxios = createNiceAxios({}, plugins)
+  const res = await niceAxios.get<AxiosResponse<string>>('https://httpd.apache.org/', {
+    // meta: { allReturn: true },
+  })
+  expect(typeof res.data === 'string').toBe(true)
+  expect(res.config.headers['xxx-TOKEN']).toBe('test-token')
+})
+
+// ----------------
+test('test default add token config', async () => {
+  const niceAxios = createNiceAxios({
+    authHeaderKeyField: 'xxx-TOKEN',
+    getToken: () => {
+      return 'test-token'
+    },
+  })
   const res = await niceAxios.get<AxiosResponse<string>>('https://httpd.apache.org/', {
     // meta: { allReturn: true },
   })

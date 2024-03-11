@@ -56,8 +56,8 @@ const getDefaultPlugins = (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) 
  * @returns
  */
 export const createNiceAxios = (
-  customPlugins: AjaxPluginFullConfig[] = [],
   options?: NiceAxiosOptions | Func<NiceAxiosOptions>,
+  customPlugins: AjaxPluginFullConfig[] = [],
 ) => {
   return new AjaxContainer([...getDefaultPlugins(options), ...customPlugins])
 }
@@ -70,7 +70,7 @@ export const getNiceAxiosInstance = (
   customPlugins: AjaxPluginFullConfig[] = [],
   options?: NiceAxiosOptions | Func<NiceAxiosOptions>,
 ) => {
-  if (!instance) instance = createNiceAxios(customPlugins, options)
+  if (!instance) instance = createNiceAxios(options, customPlugins)
 
   return instance
 }

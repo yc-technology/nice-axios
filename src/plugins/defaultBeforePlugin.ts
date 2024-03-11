@@ -13,10 +13,10 @@ export interface AjaxBeforeOptions {
 export type BuildBeforePlugin = Func1<AjaxBeforeOptions, ComposePlugin<AjaxResponse, AjaxConfig>>
 
 export const buildBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => AjaxPlugin =
-  (options) => (next, originalConfig) => {
+  (options) => async (next, originalConfig) => {
     let config = originalConfig
     const initOptions = maybeFnCall(options) || {}
-    const { defaultMeta = {} } = initOptions
+    const { defaultMeta = {}, getToken, authHeaderKeyField, tokenKeyField } = initOptions
     // initialize meta data
     if (!config.meta) config.meta = { showErrorTip: true }
     const meta = config.meta
@@ -28,7 +28,7 @@ export const buildBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOpti
     // default showErrorTip: true
     if (isUndefined(config.meta.showErrorTip)) config.meta.showErrorTip = true
 
-    const { joinPrefix } = meta
+    const { joinPrefix, addToken = false } = meta
     const { prefixURL, baseURL = '/' } = initOptions || {}
 
     if (!config.baseURL) config.baseURL = baseURL
@@ -39,15 +39,31 @@ export const buildBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOpti
 
     if (!config.headers) config.headers = {}
 
+    // add token default addToken: false
+    // -----------------add token-----------------
+    if (addToken) {
+      let token = ''
+      if (getToken) {
+        token = getToken && (await getToken())
+      } else {
+        token = localStorage.getItem(tokenKeyField || 'token') || ''
+      }
+      if (token) config.headers[authHeaderKeyField || 'Authorization'] = `${token}`
+    }
+
+    // -----------------add timestamp-----------------
     if (config.method === AjaxMethods.GET) {
       // some get request need to add timestamp to prevent cache
     } else {
       // initialize method, default value POST method
+
+      // -----------------add method-----------------
       if (!config.method) {
         config.method = AjaxMethods.POST
         config.withCredentials = true
       }
 
+      // -----------------add form content-type-----------------
       if (meta?.form) {
         config.headers['Content-Type'] = ContentTypeEnum.FORM_URLENCODED
 
