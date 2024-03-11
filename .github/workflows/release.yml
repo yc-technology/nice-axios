@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    branches:
-      - 'main'
+    tags:
+      - 'v*'
 
 jobs:
   release:
@@ -12,31 +12,6 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Set node
-        uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-      - name: Configure Git
-        run: |
-          git config --global user.email "six.django@gmail.com"
-          git config --global user.name "sixdjango"
-
-      - name: Bump version and create a tag
-        run: |
-          npm version patch -m "chore(release): bump version to %s"
-          TAG=$(git describe --tags --abbrev=0)
-          echo "Created tag $TAG"
-
-      - name: Push changes and tags
-        run: |
-          git push origin main
-          git push origin --tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
