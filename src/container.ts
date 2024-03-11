@@ -19,7 +19,7 @@ export class AjaxContainer {
     this.$agent = ajax(plugins)
   }
 
-  send<T = AxiosResponse>(option: AjaxConfig = {}, plugins: AjaxPluginConfig[] = []): Promise<T> {
+  request<T = AxiosResponse>(option: AjaxConfig = {}, plugins: AjaxPluginConfig[] = []): Promise<T> {
     const { data, body, ...reset } = option
     return this.$agent
       .attach((list) => (plugins.length ? list.concat(plugins) : list))
@@ -27,19 +27,19 @@ export class AjaxContainer {
   }
 
   get<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
-    return this.send<T>({ ...getOption(option), method: AjaxMethods.GET, url }, plugins)
+    return this.request<T>({ ...getOption(option), method: AjaxMethods.GET, url }, plugins)
   }
 
   delete<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
-    return this.send<T>({ ...getOption(option), method: AjaxMethods.DELETE, url }, plugins)
+    return this.request<T>({ ...getOption(option), method: AjaxMethods.DELETE, url }, plugins)
   }
 
   put<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
-    return this.send<T>({ ...getOption(option), method: AjaxMethods.PUT, url }, plugins)
+    return this.request<T>({ ...getOption(option), method: AjaxMethods.PUT, url }, plugins)
   }
 
   post<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
-    return this.send<T>({ ...getOption(option), method: AjaxMethods.POST, url }, plugins)
+    return this.request<T>({ ...getOption(option), method: AjaxMethods.POST, url }, plugins)
   }
 
   upload<T = AxiosResponse>(url: string, data: ComplexObject = {}, meta: AjaxConfigMeta = {}) {
