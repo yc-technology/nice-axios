@@ -20,17 +20,18 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Bump version
+      - name: Bump version and create a tag
         run: |
-          git config --global user.email "six.django@gmail.com"
-          git config --global user.name "Django"
           npm version patch -m "chore(release): bump version to %s"
+          TAG=$(git describe --tags --abbrev=0)
+          echo "Created tag $TAG"
 
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main # 或你使用的默认分支名称，比如 master
+      - name: Push changes and tags
+        run: |
+          git push origin main
+          git push origin --tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/checkout@v3
         with:
