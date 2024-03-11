@@ -19,7 +19,7 @@ export class AjaxContainer {
     this.$agent = ajax(plugins)
   }
 
-  send<T = AxiosResponse>(option: AjaxConfig = {}, plugins: AjaxPluginConfig[]): Promise<T> {
+  send<T = AxiosResponse>(option: AjaxConfig = {}, plugins: AjaxPluginConfig[] = []): Promise<T> {
     const { data, body, ...reset } = option
     return this.$agent
       .attach((list) => (plugins.length ? list.concat(plugins) : list))
