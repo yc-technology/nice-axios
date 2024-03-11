@@ -1,0 +1,37 @@
+name: Bump version and push tag
+
+on:
+  push:
+    branches:
+      - main # 或你使用的默认分支名称，比如master
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # 确保历史完整以正确计算版本号
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/* # 指定一个Node.js版本
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Bump version
+        run: |
+          git config --global user.email "six.django@gmail.com"
+          git config --global user.name "Django"
+          npm version patch -m "chore(release): bump version to %s"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main # 或你使用的默认分支名称，比如 master
