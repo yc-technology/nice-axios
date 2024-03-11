@@ -9,20 +9,14 @@ jobs:
   version-bump:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # 确保历史完整以正确计算版本号
+          fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Set node
         uses: actions/setup-node@v3
         with:
-          node-version: lts/* # 指定一个Node.js版本
-          cache: pnpm
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        run: pnpm install
+          node-version: lts/*
 
       - name: Bump version
         run: |
