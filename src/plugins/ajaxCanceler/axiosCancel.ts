@@ -4,12 +4,12 @@ import type { AxiosRequestConfig, Canceler } from 'axios'
 import { isFunction } from 'lodash-es'
 import type { AjaxConfig } from '../../types'
 
-// 声明一个 Map 用于存储每个请求的标识 和 取消函数
-let pendingMap = new Map<string, Canceler>()
-
-export const getPendingUrl = (config: AxiosRequestConfig | AjaxConfig) => [config.url, (config as AjaxConfig).timestamp].join('&')
+export const getPendingUrl = (config: AxiosRequestConfig | AjaxConfig) =>
+  [config.url, (config as AjaxConfig).timestamp].join('&')
 
 export class AxiosCanceler {
+  // 声明一个 Map 用于存储每个请求的标识 和 取消函数
+  pendingMap = new Map<string, Canceler>()
   /**
    * 添加请求
    * @param {Object} config
@@ -17,12 +17,12 @@ export class AxiosCanceler {
   addPending(config: AxiosRequestConfig) {
     this.removePending(config)
     const url = getPendingUrl(config)
-    config.cancelToken
-      = config.cancelToken
-      || new axios.CancelToken((cancel) => {
-        if (!pendingMap.has(url)) {
+    config.cancelToken =
+      config.cancelToken ||
+      new axios.CancelToken((cancel) => {
+        if (!this.pendingMap.has(url)) {
           // 如果 pending 中不存在当前请求，则添加进去
-          pendingMap.set(url, cancel)
+          this.pendingMap.set(url, cancel)
         }
       })
   }
@@ -31,10 +31,10 @@ export class AxiosCanceler {
    * @description: 清空所有pending
    */
   removeAllPending() {
-    pendingMap.forEach((cancel) => {
+    this.pendingMap.forEach((cancel) => {
       cancel && isFunction(cancel) && cancel('Cancel:')
     })
-    pendingMap.clear()
+    this.pendingMap.clear()
   }
 
   /**
@@ -43,11 +43,11 @@ export class AxiosCanceler {
    */
   removePending(config: AxiosRequestConfig) {
     const url = getPendingUrl(config)
-    if (pendingMap.has(url)) {
+    if (this.pendingMap.has(url)) {
       // 如果在 pending 中存在当前请求标识，需要取消当前请求，并且移除
-      const cancel = pendingMap.get(url)
+      const cancel = this.pendingMap.get(url)
       cancel && cancel(`Cancel:${url}`)
-      pendingMap.delete(url)
+      this.pendingMap.delete(url)
     }
   }
 
@@ -55,6 +55,6 @@ export class AxiosCanceler {
    * @description: 重置
    */
   reset(): void {
-    pendingMap = new Map<string, Canceler>()
+    this.pendingMap = new Map<string, Canceler>()
   }
 }

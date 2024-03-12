@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import type { Action, AjaxConfig, AjaxResponse, ComposePlugin } from '../../types'
 
 export const addCancelerPlugin: ComposePlugin<AjaxResponse, AjaxConfig> = (next, config) => {
@@ -15,12 +14,5 @@ export const addCancelerPlugin: ComposePlugin<AjaxResponse, AjaxConfig> = (next,
 
 export const removeCancelerPlugin: ComposePlugin<AjaxResponse, AjaxConfig> = async (next, config) => {
   const remove = config.meta?.canceler as Action
-
-  return next()
-    .catch((error: AxiosError) => {
-      if (error?.message?.startsWith('Cancel')) return Promise.reject({ cancel: true, ...error })
-
-      return Promise.reject(error)
-    })
-    .finally(() => remove())
+  return next().finally(() => remove())
 }

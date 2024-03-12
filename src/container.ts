@@ -6,8 +6,10 @@ import { AjaxMethods } from './constants'
 import { AxiosCanceler } from './plugins/ajaxCanceler/axiosCancel'
 
 const getOption = (option: AjaxConfig) => {
-  if ('data' in option) {
-    return option
+  for (const k of ['data', 'signal', 'body', 'params', 'headers', 'meta']) {
+    if (k in option) {
+      return option
+    }
   }
   // generate new option
   return { data: option }
@@ -15,7 +17,7 @@ const getOption = (option: AjaxConfig) => {
 
 export class NiceAjaxContainer {
   private $agent: AjaxAgent
-  private $canceler: AxiosCanceler = new AxiosCanceler()
+  $canceler: AxiosCanceler = new AxiosCanceler()
 
   constructor(plugins: NiceAjaxPlugin[] = []) {
     this.$agent = ajax(plugins)
@@ -77,5 +79,9 @@ export class NiceAjaxContainer {
 
   getAgent() {
     return this.$agent
+  }
+
+  cancelAll() {
+    this.$canceler.removeAllPending()
   }
 }

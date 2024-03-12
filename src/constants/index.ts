@@ -37,6 +37,13 @@ export const errorResult = '__ERROR_RESULT__'
 
 export const errorResultNull = '__ERROR_RESULT_NULL__'
 
+export enum NiceAxiosErrorCode {
+  /**
+   * 请求被取消
+   */
+  ERR_CANCELED = 'ERR_CANCELED',
+}
+
 export enum NiceAxiosPluginOrder {
   MAX_AFTER_PLUGIN = 10000,
   MIN_BEFORE_PLUGIN = -10000,
