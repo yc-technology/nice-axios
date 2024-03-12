@@ -1,8 +1,9 @@
 import { isArray } from 'lodash-es'
 import { ajax } from './core'
-import type { AjaxAgent, AjaxConfig, AjaxConfigMeta, AjaxPluginConfig, ComplexObject, ComposeResult } from './types'
+import type { AjaxAgent, AjaxConfig, AjaxConfigMeta, NiceAjaxPlugin, ComplexObject, ComposeResult } from './types'
 import { AxiosResponse } from 'axios'
 import { AjaxMethods } from './constants'
+import { AxiosCanceler } from './plugins/ajaxCanceler/axiosCancel'
 
 const getOption = (option: AjaxConfig) => {
   if ('data' in option) {
@@ -12,33 +13,34 @@ const getOption = (option: AjaxConfig) => {
   return { data: option }
 }
 
-export class AjaxContainer {
+export class NiceAjaxContainer {
   private $agent: AjaxAgent
+  private $canceler: AxiosCanceler = new AxiosCanceler()
 
-  constructor(plugins: AjaxPluginConfig[] = []) {
+  constructor(plugins: NiceAjaxPlugin[] = []) {
     this.$agent = ajax(plugins)
   }
 
-  request<T = AxiosResponse>(option: AjaxConfig = {}, plugins: AjaxPluginConfig[] = []): Promise<T> {
+  request<T = AxiosResponse>(option: AjaxConfig = {}, plugins: NiceAjaxPlugin[] = []): Promise<T> {
     const { data, body, ...reset } = option
     return this.$agent
       .attach((list) => (plugins.length ? list.concat(plugins) : list))
-      .then((v) => v.exec({ ...reset, data: body || data })) as Promise<T>
+      .then((v) => v.exec({ ...reset, data: body || data, $canceler: this.$canceler })) as Promise<T>
   }
 
-  get<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+  get<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: NiceAjaxPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.GET, url }, plugins)
   }
 
-  delete<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+  delete<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: NiceAjaxPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.DELETE, url }, plugins)
   }
 
-  put<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+  put<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: NiceAjaxPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.PUT, url }, plugins)
   }
 
-  post<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: AjaxPluginConfig[]) {
+  post<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: NiceAjaxPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.POST, url }, plugins)
   }
 
@@ -57,7 +59,7 @@ export class AjaxContainer {
     })
   }
 
-  async attach(callback: ((list: AjaxPluginConfig[]) => ComposeResult<AjaxPluginConfig[]>) | AjaxPluginConfig[]) {
+  async attach(callback: ((list: NiceAjaxPlugin[]) => ComposeResult<NiceAjaxPlugin[]>) | NiceAjaxPlugin[]) {
     if (isArray(callback)) {
       if (callback.length) {
         // 构建新的插件列表

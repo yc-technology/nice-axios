@@ -1,22 +1,15 @@
 import { isString, isUndefined } from 'lodash-es'
-import type { AjaxConfig, AjaxPlugin, AjaxResponse, ComposePlugin, Func, Func1, NiceAxiosOptions } from '../types'
+import type { Func, NiceAjaxExecutor, NiceAxiosOptions } from '../types'
 import { stringifyParams } from '../utils'
 
-import { getMultipartConfig, isHttpUrl, maybeFnCall } from './utils'
 import { AjaxMethods, ContentTypeEnum } from '~/constants'
+import { getMultipartConfig, isHttpUrl, maybeFnCall } from './utils'
 
-export interface AjaxBeforeOptions {
-  apiUrl?: string
-  urlPrefix?: string
-}
-
-export type BuildBeforePlugin = Func1<AjaxBeforeOptions, ComposePlugin<AjaxResponse, AjaxConfig>>
-
-export const buildBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => AjaxPlugin =
+export const buildDefaultBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => NiceAjaxExecutor =
   (options) => async (next, originalConfig) => {
     let config = originalConfig
     const initOptions = maybeFnCall(options) || {}
-    const { defaultMeta = {}, getToken, authHeaderKeyField, tokenKeyField } = initOptions
+    const { defaultMeta = {}, getToken, headerAuthFieldKey, storageTokenFieldKey } = initOptions
     // initialize meta data
     if (!config.meta) config.meta = { showErrorTip: true }
     const meta = config.meta
@@ -46,9 +39,9 @@ export const buildBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOpti
       if (getToken) {
         token = getToken && (await getToken())
       } else {
-        token = localStorage.getItem(tokenKeyField || 'token') || ''
+        token = localStorage.getItem(storageTokenFieldKey || 'token') || ''
       }
-      if (token) config.headers[authHeaderKeyField || 'Authorization'] = `${token}`
+      if (token) config.headers[headerAuthFieldKey || 'Authorization'] = `${token}`
     }
 
     // -----------------add timestamp-----------------

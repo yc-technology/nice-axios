@@ -1,10 +1,10 @@
-import type { AjaxPlugin } from '..'
+import type { NiceAjaxExecutor } from '..'
 import type { AjaxResponse, ComposeResult } from '../types'
 import { sleep } from '../utils'
 
 const requestPromise = new Map<string, ComposeResult<AjaxResponse>>()
 
-export const mergeRequestPlugin: AjaxPlugin = async (next, config) => {
+export const mergeRequestPlugin: NiceAjaxExecutor = async (next, config) => {
   if (config.meta?.merge === false) return next()
 
   const requestId = `${config.url}${config.method}${JSON.stringify(config.data)}${JSON.stringify(config.params)}${config.meta}${config.headers}`

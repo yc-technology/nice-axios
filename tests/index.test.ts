@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 import { expect, test } from 'vitest'
 import { createNiceAxios } from '~/instance'
-import { AjaxPlugin, AjaxPluginFullConfig, ComposePlugin } from '~/types'
+import { NiceAjaxExecutor, NiceAjaxPluginConfig, ComposePlugin } from '~/types'
 import { compose } from '~/utils/compose'
 
 test('test reduce right', () => {
@@ -20,7 +20,7 @@ test('test reduce right', () => {
 })
 
 test('test fetch date', async () => {
-  const addTokenPlugin: AjaxPlugin = async (next, config) => {
+  const addTokenPlugin: NiceAjaxExecutor = async (next, config) => {
     // Execute before request
     const token = 'test-token'
     if (config?.headers) {
@@ -33,7 +33,7 @@ test('test fetch date', async () => {
     })
   }
 
-  const plugins: AjaxPluginFullConfig[] = [
+  const plugins: NiceAjaxPluginConfig[] = [
     // generate plugin instance
     {
       // When the value is approximately small, the observer will be executed earlier before the request. On the contrary, the larger the value, the earlier the observer will be executed after the request.
@@ -54,7 +54,7 @@ test('test fetch date', async () => {
 // ----------------
 test('test default add token config', async () => {
   const niceAxios = createNiceAxios({
-    authHeaderKeyField: 'xxx-TOKEN',
+    headerAuthFieldKey: 'xxx-TOKEN',
     getToken: () => {
       return 'test-token'
     },

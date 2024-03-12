@@ -36,3 +36,34 @@ export enum ContentTypeEnum {
 export const errorResult = '__ERROR_RESULT__'
 
 export const errorResultNull = '__ERROR_RESULT_NULL__'
+
+export enum NiceAxiosPluginOrder {
+  MAX_AFTER_PLUGIN = 10000,
+  MIN_BEFORE_PLUGIN = -10000,
+  /**
+   * 添加当前 Ajax 请求的手动取消功能：应该在所有插件中的第一个
+   */
+  CANCEL_REQUEST_BEFORE_PLUGIN = -9000,
+
+  /**
+   * 合并请求
+   */
+  MERGE_REQUEST_BEFORE_PLUGIN = -8900,
+
+  /**
+   * 基础业务前置插件
+   */
+  GENERAL_BEFORE_PLUGIN = -8800,
+
+  // -------------------- ↓ After Plugin ↓ --------------------
+
+  /**
+   * 移除当前请求的手动取消功能：应该在所有后置插件中的最后一个
+   */
+  REMOVE_CANCEL_REQUEST_AFTER_PLUGIN = 9000,
+
+  /**
+   * 通用后置逻辑, 最优先被执行一般处理原始数据
+   */
+  GENERAL_AFTER_PLUGIN = 8900,
+}

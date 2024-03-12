@@ -38,7 +38,7 @@ niceAxios.post()
 ```js
 import { createNiceAxios } from 'nice-axios'
 
-const addTokenPlugin: AjaxPlugin = async (next, config) => {
+const addTokenPlugin: NiceAjaxExecutor = async (next, config) => {
     // Execute before request
     const token = 'test-token'
     if (config?.headers) {
@@ -51,7 +51,7 @@ const addTokenPlugin: AjaxPlugin = async (next, config) => {
     })
   }
 
-  const plugins: AjaxPluginFullConfig[] = [
+  const plugins: NiceAjaxPlugin[] = [
     // generate plugin instance
     {
       // When the value is approximately small, the observer will be executed earlier before the request. On the contrary, the larger the value, the earlier the observer will be executed after the request.
@@ -76,6 +76,38 @@ const addTokenPlugin: AjaxPlugin = async (next, config) => {
 | name              | string           | scope             |
 | afterPluginOption | AjaxAfterOptions | afterPluginOption |
 | defaultMeta       | AjaxConfigMeta   | defaultMeta       |
+
+## 原理
+
+```ts
+/**
+ * 采用 compose 插件模式，对请求进行处理
+ * 默认插件顺序是从左到右
+ * - 请求前置插件 order 从小到大 [1,2,3,4,5] 越小越先执行
+ * - 请求后置插件 order 从大到小 [-1,-2,-3,-4,-5] 越大越先执行
+ * ## 执行顺序解释：
+ * 1. 设计里面是”洋葱模型理念“，像洋葱一样，请求先从外层插件开始执行，然后依次往内层执行，最后返回结果
+ * 2. 核心方法是 `compose`，`compose` 会将所有插件组合成一个函数，然后执行这个函数，这个函数会依次执行所有插件
+ */
+export type NiceAjaxExecutor = ComposePlugin<AjaxResponse, AjaxConfig>
+```
+
+### 例子
+
+```ts
+// 插件 1
+const plugin1: NiceAjaxPlugin = {
+  desc: '插件1',
+  order: 1,
+  executor: async (next, config) => {
+    // 由于一个请求的生命周期中，config 都是一个对象引用。所以这里修改后会影响之后的 config 的值
+    config.xx = xx
+    // 这里可以传新的 config，新的 config 会覆盖原来的 config。注意这里是重新赋值 oldConfig = newConfig
+    // next 在不断的调用下一个插件的关键
+    return next(newConfig)
+  },
+}
+```
 
 ## Star History
 

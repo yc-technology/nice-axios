@@ -1,9 +1,9 @@
-import { AjaxContainer } from './container'
+import { NiceAjaxContainer } from './container'
 import { addCancelerPlugin, removeCancelerPlugin } from './plugins/ajaxCanceler'
 import { mergeRequestPlugin } from './plugins/mergeRequestPlugin'
-import { buildAfterPlugin, buildBeforePlugin } from '.'
-import type { AjaxPluginFullConfig, Func, NiceAxiosOptions } from '.'
-let instance: AjaxContainer
+import { buildDefaultAfterPlugin, buildDefaultBeforePlugin, NiceAxiosPluginOrder } from '.'
+import type { NiceAjaxPluginConfig, Func, NiceAxiosOptions } from '.'
+let instance: NiceAjaxContainer
 
 // step 20
 
@@ -16,21 +16,29 @@ let instance: AjaxContainer
  */
 const getDefaultPlugins = (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => {
   return [
-    // 越小越前面
-
-    // pre plugins
-    { desc: '添加当前 Ajax 请求的手动取消功能：应该在所有插件中的第一个', order: -1040, executor: addCancelerPlugin },
-    { desc: '合并请求', order: -1020, executor: mergeRequestPlugin },
+    {
+      desc: '添加当前 Ajax 请求的手动取消功能：应该在所有插件中的第一个',
+      order: NiceAxiosPluginOrder.CANCEL_REQUEST_BEFORE_PLUGIN,
+      executor: addCancelerPlugin,
+    },
+    { desc: '合并请求', order: NiceAxiosPluginOrder.MERGE_REQUEST_BEFORE_PLUGIN, executor: mergeRequestPlugin },
     {
       desc: '基础业务前置插件',
-      order: -1000,
-      executor: buildBeforePlugin(options),
+      order: NiceAxiosPluginOrder.GENERAL_BEFORE_PLUGIN,
+      executor: buildDefaultBeforePlugin(options),
     },
 
-    // order 越大，越早被执行
-    // post plugins
-    { desc: '通用后置逻辑', order: 1000, executor: buildAfterPlugin(options) },
-    { desc: '移除当前请求的手动取消功能：应该在所有插件中的最后一个', order: 0, executor: removeCancelerPlugin },
+    //-------------------------------------------- ↓ After Plugin ↓ --------------------------------------------
+    {
+      desc: '通用后置逻辑',
+      order: NiceAxiosPluginOrder.GENERAL_AFTER_PLUGIN,
+      executor: buildDefaultAfterPlugin(options),
+    },
+    {
+      desc: '移除当前请求的手动取消功能：应该在所有插件中的最后一个',
+      order: NiceAxiosPluginOrder.REMOVE_CANCEL_REQUEST_AFTER_PLUGIN,
+      executor: removeCancelerPlugin,
+    },
   ]
 }
 
@@ -57,9 +65,9 @@ const getDefaultPlugins = (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) 
  */
 export const createNiceAxios = (
   options?: NiceAxiosOptions | Func<NiceAxiosOptions>,
-  customPlugins: AjaxPluginFullConfig[] = [],
+  customPlugins: NiceAjaxPluginConfig[] = [],
 ) => {
-  return new AjaxContainer([...getDefaultPlugins(options), ...customPlugins])
+  return new NiceAjaxContainer([...getDefaultPlugins(options), ...customPlugins])
 }
 
 /**
@@ -67,7 +75,7 @@ export const createNiceAxios = (
  * @returns
  */
 export const getNiceAxiosInstance = (
-  customPlugins: AjaxPluginFullConfig[] = [],
+  customPlugins: NiceAjaxPluginConfig[] = [],
   options?: NiceAxiosOptions | Func<NiceAxiosOptions>,
 ) => {
   if (!instance) instance = createNiceAxios(options, customPlugins)

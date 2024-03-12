@@ -1,4 +1,5 @@
-import type { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
+import type { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from 'axios'
+import { AxiosCanceler } from './plugins/ajaxCanceler/axiosCancel'
 
 export { AxiosResponse }
 
@@ -17,15 +18,16 @@ export interface NiceAxiosOptions {
   afterPluginOption?: AjaxAfterOptions
 
   /**
-   * default: Authorization
    * header key
+   * default: Authorization
    */
-  authHeaderKeyField?: string
+  headerAuthFieldKey?: string
   /**
    * default: token
    * local storage key
    */
-  tokenKeyField?: string
+  storageTokenFieldKey?: string
+
   getToken?: () => Promise<string> | string
   defaultMeta?: AjaxConfigMeta
 }
@@ -61,18 +63,33 @@ export interface AjaxAfterOptions {
    * 接口返回数据的key
    * default:data
    */
-  resultKey?: string
+  dataFieldKey?: string
+
+  /**
+   * 接口返回状态码的key
+   * default: code
+   */
+  codeFieldKey?: string
+
+  /**
+   * 接口返回消息的key
+   * default: message
+   */
+  messageFieldKey?: string
+
+  handleCustomSuccess?: (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAfterOptions) => AjaxResponse
+
   /**
    * 根据不同的错误码和描述信息执行某些操作，属于业务异常的处理都在这里订阅
    */
-  checkErrorCode: Action4<string | number, string, BusinessAjaxResult, AjaxConfigMeta | undefined>
+  onCatchBusinessError?: Action4<string | number, string, BusinessAjaxResult, AjaxConfigMeta | undefined>
   /**
    * 根据不同的 HTTP 状态码和描述信息执行某些操作：
    * 额外的特殊状态码，由组件库定义：
    * :timeout => 表示超时
    * :networkError => 表示网络异常
    */
-  checkHttpErrorCode: Action2<InnerError | string, AjaxConfigMeta | undefined>
+  onCatchAxiosError?: Action2<AxiosError | string, AjaxConfigMeta | undefined>
 }
 
 export interface AjaxConfigMeta extends ComplexObject {
@@ -80,7 +97,10 @@ export interface AjaxConfigMeta extends ComplexObject {
   upload?: boolean
   joinPrefix?: boolean
   isTransformRequestResult?: boolean
-  allReturn?: boolean
+  /**
+   * 禁止处理响应数据
+   */
+  disableRespProcessing?: boolean
   showErrorTip?: boolean
   // merge request
   merge?: boolean
@@ -95,6 +115,7 @@ export interface AjaxConfig extends AxiosRequestConfig {
   headers?: ComplexObject
   params?: string | ComplexObject | any
   data?: string | ComplexObject | any
+  $canceler?: AxiosCanceler
   [key: string]: any
 }
 
@@ -106,23 +127,47 @@ export interface AjaxResponse extends ComplexObject {
   headers: ComplexObject
 }
 
-export type AjaxPlugin = ComposePlugin<AjaxResponse, AjaxConfig>
+/**
+ * 采用 compose 插件模式，对请求进行处理
+ * 默认插件顺序是从左到右
+ * - 请求前置插件 order 从小到大 [1,2,3,4,5] 越小越先执行
+ * - 请求后置插件 order 从大到小 [-1,-2,-3,-4,-5] 越大越先执行
+ * ## 执行顺序解释：
+ * 1. 设计里面是”洋葱模型理念“，像洋葱一样，请求先从外层插件开始执行，然后依次往内层执行，最后返回结果
+ * 2. 核心方法是 `compose`，`compose` 会将所有插件组合成一个函数，然后执行这个函数，这个函数会依次执行所有插件
+ * @example
+ * ```ts
+ * // 插件 1
+ * const plugin1: NiceAjaxPlugin = {
+ *  desc: '插件1',
+ *  order: 1,
+ *  executor: async (next, config) => {
+ *  // 由于一个请求的生命周期中，config 都是一个对象引用。所以这里修改后会影响之后的 config 的值
+ *  config.xx = xx
+ *  // 这里可以传新的 config，新的 config 会覆盖原来的 config。注意这里是重新赋值 oldConfig = newConfig
+ *  // next 在不断的调用下一个插件的关键
+ *  return next(newConfig)
+ *  }
+ * }
+ * ```
+ */
+export type NiceAjaxExecutor = ComposePlugin<AjaxResponse, AjaxConfig>
 
-export interface AjaxPluginFullConfig {
+export interface NiceAjaxPluginConfig {
   desc: string
   order: number
-  executor: AjaxPlugin
+  executor: NiceAjaxExecutor
 }
 
-export type AjaxPluginConfig = AjaxPlugin | AjaxPluginFullConfig
+export type NiceAjaxPlugin = NiceAjaxExecutor | NiceAjaxPluginConfig
 
 export interface AjaxExecutor {
   (config: AjaxConfig): Promise<AjaxResponse>
 }
 
 export interface AjaxAgent {
-  add(list: AjaxPluginConfig[]): AjaxAgent
-  attach(callback: (list: AjaxPluginConfig[]) => ComposeResult<AjaxPluginConfig[]>): Promise<AjaxAgent>
+  add(list: NiceAjaxPlugin[]): AjaxAgent
+  attach(callback: (list: NiceAjaxPlugin[]) => ComposeResult<NiceAjaxPlugin[]>): Promise<AjaxAgent>
   exec(args: AjaxConfig): Promise<AjaxResponse>
 }
 

@@ -1,14 +1,14 @@
 import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
 import { isFunction } from 'lodash-es'
-import type { AjaxAgent, AjaxConfig, AjaxExecutor, AjaxPluginConfig, AjaxResponse, ComposeResult } from './types'
+import type { AjaxAgent, AjaxConfig, AjaxExecutor, NiceAjaxPlugin, AjaxResponse, ComposeResult } from './types'
 import { compose } from './utils/compose'
 
 export { axios }
 
-const getOrder = (plugin: AjaxPluginConfig) => (isFunction(plugin) ? 0 : plugin.order)
+const getOrder = (plugin: NiceAjaxPlugin) => (isFunction(plugin) ? 0 : plugin.order)
 
-export const fetch = (defaultAction: AjaxExecutor, plugins: AjaxPluginConfig[]): AjaxAgent => {
+export const fetch = (defaultAction: AjaxExecutor, plugins: NiceAjaxPlugin[]): AjaxAgent => {
   // 缓存执行器
   let cachedExecutor: (config: AjaxConfig) => ComposeResult<AjaxResponse>
   return {
@@ -18,7 +18,7 @@ export const fetch = (defaultAction: AjaxExecutor, plugins: AjaxPluginConfig[]):
       return fetch(defaultAction, plugins.concat(list))
     },
     async attach(callback) {
-      const newPlugins = new Promise<AjaxPluginConfig[]>((resolve, reject) => {
+      const newPlugins = new Promise<NiceAjaxPlugin[]>((resolve, reject) => {
         try {
           resolve(callback(plugins))
         } catch (e) {
@@ -55,5 +55,5 @@ export const fetch = (defaultAction: AjaxExecutor, plugins: AjaxPluginConfig[]):
  * @param plugins
  * @returns
  */
-export const ajax = (plugins: AjaxPluginConfig[]): AjaxAgent =>
+export const ajax = (plugins: NiceAjaxPlugin[]): AjaxAgent =>
   fetch((config) => axios(config as AxiosRequestConfig).then((v) => ({ ...v, config }) as AjaxResponse), plugins)
