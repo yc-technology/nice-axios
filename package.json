@@ -52,7 +52,7 @@
     "release": "bumpp --commit --push --tag && npm publish",
     "start": "esno src/index.ts",
     "typecheck": "tsc --noEmit",
-    "ci": "npm version patch -m 'chore(release): bump version to %s' && git push && git push --tags",
+    "github:ci": "npm version patch -m 'chore(release): bump version to %s' && git push && git push --tags",
     "test": "vitest",
     "test:ui": "vitest --ui"
   },
