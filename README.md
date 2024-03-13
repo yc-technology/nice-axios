@@ -19,6 +19,14 @@ pnpm add nice-axios
 npm i nice-axios
 ```
 
+- CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/lodash@4.17.21/lodash.min.js"></script>
+<script src="./dist/umd/index.umd.js"></script>
+```
+
 ## 🔍 Usage
 
 - Basic
