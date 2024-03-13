@@ -28,6 +28,6 @@ let onUnMounted: (
 export function useNiceAxiosCancelAllRequestsVueHook(instance: NiceAxios) {
   onUnMounted(() => {
     // 取消所有的请求
-    instance.cancelAllRequests()
+    instance.$canceler.cancelAllRequests()
   })
 }

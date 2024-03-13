@@ -7,17 +7,35 @@ import pkg from './package.json'
 export default defineConfig({
   input: 'src/index.ts',
   plugins: [json(), typescript(), terser()],
-  external: ['axios', 'lodash-es', 'vue'],
+  external: ['axios', 'lodash-es', 'vue', 'react'],
   output: [
     {
       format: 'cjs',
       file: pkg.main,
       esModule: false,
       sourcemap: true,
+      globals: {
+        axios: 'axios',
+        'lodash-es': '_',
+      },
     },
     {
       format: 'es',
       file: pkg.module,
+      sourcemap: true,
+      globals: {
+        axios: 'axios',
+        'lodash-es': '_',
+      },
+    },
+    {
+      format: 'umd',
+      globals: {
+        axios: 'axios',
+        'lodash-es': '_',
+      },
+      name: 'NiceAxios',
+      file: pkg.umd,
       sourcemap: true,
     },
     {
@@ -25,7 +43,10 @@ export default defineConfig({
       file: pkg.jsdelivr,
       name: 'Test',
       extend: true,
-      globals: {},
+      globals: {
+        axios: 'axios',
+        'lodash-es': '_',
+      },
     },
   ],
 })

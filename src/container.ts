@@ -87,8 +87,4 @@ export class NiceAxios {
   getAgent() {
     return this.$agent
   }
-
-  cancelAllRequests() {
-    this.$canceler.removeAllPending()
-  }
 }
