@@ -1,19 +1,19 @@
 import type {
-  AjaxAfterOptions,
-  AjaxConfigMeta,
-  NiceAjaxExecutor,
-  AjaxResponse,
   ComposeResult,
   Func,
+  NiceAjaxExecutor,
+  NiceAxiosAfterOptions,
+  NiceAxiosConfig,
   NiceAxiosOptions,
 } from '../types'
 
-import { AxiosError } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import { errorResultNull } from '~/constants'
 import { maybeFnCall } from './utils'
 
-const handleSuccess = (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAfterOptions) => {
+const handleSuccess = (res: AxiosResponse, config: NiceAxiosConfig, options?: NiceAxiosAfterOptions) => {
   // 默认
+  const { meta = {} } = config
   const { disableRespProcessing = true } = meta
   const { handleCustomSuccess } = options || {}
   // 不进行任何处理，直接返回
@@ -26,17 +26,17 @@ const handleSuccess = (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAf
 
   if (!result) {
     // return '[HTTP] Request has no return value';
-    return Promise.reject(errorResultNull)
+    return Promise.reject(new AxiosError(errorResultNull, AxiosError.ERR_BAD_RESPONSE, res.config, res.request, res))
   }
   const data = result[options?.dataFieldKey || 'data']
   const code = result[options?.codeFieldKey || 'code']
   const message = result[options?.messageFieldKey || 'message']
 
   // 接口请求成功，直接返回结果
-  if (code === (options?.successCode || 200)) return data as AjaxResponse
+  if (code === (options?.successCode || 200)) return data as AxiosResponse
 
-  options?.onCatchBusinessError?.(code, message, result, meta)
-  return Promise.reject(new Error(result))
+  options?.onCatchBusinessError?.(code, message, res, config)
+  return Promise.reject(new AxiosError(message, AxiosError.ERR_BAD_RESPONSE, res.config, res.request, res))
 }
 
 /**
@@ -46,16 +46,11 @@ const handleSuccess = (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAf
  *  }
  * @param error
  * @param options
- * @param meta
+ * @param config
  * @returns
  */
-const handleError = (error: AxiosError, options?: AjaxAfterOptions, meta?: AjaxConfigMeta) => {
-  const { code, message } = error || {}
-  const err: string = error.toString()
-  if (code === 'ECONNABORTED' && message.includes('timeout')) options?.onCatchAxiosError?.(':timeout', meta)
-  else if (err && err.includes('Network Error')) options?.onCatchAxiosError?.(':networkError', meta)
-  else options?.onCatchAxiosError?.(error, meta)
-
+const handleError = (error: AxiosError, config?: NiceAxiosConfig, options?: NiceAxiosAfterOptions) => {
+  options?.onCatchAxiosError?.(error, config)
   return Promise.reject(error)
 }
 
@@ -64,7 +59,7 @@ export const buildDefaultAfterPlugin: (options?: NiceAxiosOptions | Func<NiceAxi
     const initOptions = maybeFnCall(options)
 
     return next().then(
-      (v: AjaxResponse) => handleSuccess(v, config.meta || {}, initOptions?.afterPluginOption),
-      (e: AxiosError) => handleError(e, initOptions?.afterPluginOption, config.meta),
-    ) as ComposeResult<AjaxResponse>
+      (v: AxiosResponse) => handleSuccess(v, config, initOptions?.afterPluginOption),
+      (e: AxiosError) => handleError(e, config, initOptions?.afterPluginOption),
+    ) as ComposeResult<AxiosResponse>
   }

@@ -1,9 +1,9 @@
-import { NiceAjaxContainer } from './container'
+import { NiceAxios } from './container'
 import { addCancelerPlugin, removeCancelerPlugin } from './plugins/ajaxCanceler'
 import { mergeRequestPlugin } from './plugins/mergeRequestPlugin'
 import { buildDefaultAfterPlugin, buildDefaultBeforePlugin, NiceAxiosPluginOrder } from '.'
 import type { NiceAjaxPluginConfig, Func, NiceAxiosOptions } from '.'
-let instance: NiceAjaxContainer
+let instance: NiceAxios
 
 // step 20
 
@@ -67,7 +67,7 @@ export const createNiceAxios = (
   options?: NiceAxiosOptions | Func<NiceAxiosOptions>,
   customPlugins: NiceAjaxPluginConfig[] = [],
 ) => {
-  return new NiceAjaxContainer([...getDefaultPlugins(options), ...customPlugins])
+  return new NiceAxios([...getDefaultPlugins(options), ...customPlugins])
 }
 
 /**

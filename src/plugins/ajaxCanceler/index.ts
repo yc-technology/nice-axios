@@ -1,18 +1,35 @@
-import type { Action, AjaxConfig, AjaxResponse, ComposePlugin } from '../../types'
+import type { NiceAxiosConfig, AjaxResponse, ComposePlugin } from '../../types'
 
-export const addCancelerPlugin: ComposePlugin<AjaxResponse, AjaxConfig> = (next, config) => {
+/**
+ * 保存 signal 用于取消请求
+ * @param next
+ * @param config
+ * @returns
+ */
+export const addCancelerPlugin: ComposePlugin<AjaxResponse, NiceAxiosConfig> = (next, config) => {
   config.timestamp = `${Date.now()}-${~~(Math.random() * 1000)}`
 
-  const { headers: { ignoreCancelToken } = { ignoreCancelToken: false }, $canceler } = config
-  !ignoreCancelToken && $canceler?.addPending(config)
-
-  if (config.meta) config.meta.canceler = () => $canceler?.removePending(config)
-  else config.meta = { canceler: () => $canceler?.removePending(config) }
+  const { meta } = config
+  const { isSignalRequired } = meta || {}
+  if (isSignalRequired) {
+    config.$canceler?.addRequest(config)
+  }
 
   return next()
 }
 
-export const removeCancelerPlugin: ComposePlugin<AjaxResponse, AjaxConfig> = async (next, config) => {
-  const remove = config.meta?.canceler as Action
-  return next().finally(() => remove())
+/**
+ * 去除取消 signal
+ * @param next
+ * @param config
+ * @returns
+ */
+export const removeCancelerPlugin: ComposePlugin<AjaxResponse, NiceAxiosConfig> = async (next, config) => {
+  return next().finally(() => {
+    const { meta } = config
+    const { isSignalRequired } = meta || {}
+    if (isSignalRequired) {
+      config.$canceler?.removeRequest(config)
+    }
+  })
 }

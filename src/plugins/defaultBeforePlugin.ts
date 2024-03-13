@@ -21,7 +21,7 @@ export const buildDefaultBeforePlugin: (options?: NiceAxiosOptions | Func<NiceAx
     // default showErrorTip: true
     if (isUndefined(config.meta.showErrorTip)) config.meta.showErrorTip = true
 
-    const { joinPrefix, addToken = false } = meta
+    const { joinPrefix, isTokenRequired: addToken = false } = meta
     const { prefixURL, baseURL = '/' } = initOptions || {}
 
     if (!config.baseURL) config.baseURL = baseURL

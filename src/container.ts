@@ -1,11 +1,18 @@
 import { isArray } from 'lodash-es'
 import { ajax } from './core'
-import type { AjaxAgent, AjaxConfig, AjaxConfigMeta, NiceAjaxPlugin, ComplexObject, ComposeResult } from './types'
+import type {
+  AjaxAgent,
+  NiceAxiosConfig,
+  NiceAxiosConfigMeta,
+  NiceAjaxPlugin,
+  ComplexObject,
+  ComposeResult,
+} from './types'
 import { AxiosResponse } from 'axios'
 import { AjaxMethods } from './constants'
 import { AxiosCanceler } from './plugins/ajaxCanceler/axiosCancel'
 
-const getOption = (option: AjaxConfig) => {
+const getOption = (option: NiceAxiosConfig) => {
   for (const k of ['data', 'signal', 'body', 'params', 'headers', 'meta']) {
     if (k in option) {
       return option
@@ -15,7 +22,7 @@ const getOption = (option: AjaxConfig) => {
   return { data: option }
 }
 
-export class NiceAjaxContainer {
+export class NiceAxios {
   private $agent: AjaxAgent
   $canceler: AxiosCanceler = new AxiosCanceler()
 
@@ -23,37 +30,37 @@ export class NiceAjaxContainer {
     this.$agent = ajax(plugins)
   }
 
-  request<T = AxiosResponse>(option: AjaxConfig = {}, plugins: NiceAjaxPlugin[] = []): Promise<T> {
+  request<T = AxiosResponse>(option: NiceAxiosConfig = {}, plugins: NiceAjaxPlugin[] = []): Promise<T> {
     const { data, body, ...reset } = option
     return this.$agent
       .attach((list) => (plugins.length ? list.concat(plugins) : list))
       .then((v) => v.exec({ ...reset, data: body || data, $canceler: this.$canceler })) as Promise<T>
   }
 
-  get<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: NiceAjaxPlugin[]) {
+  get<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAjaxPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.GET, url }, plugins)
   }
 
-  delete<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: NiceAjaxPlugin[]) {
+  delete<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAjaxPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.DELETE, url }, plugins)
   }
 
-  put<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: NiceAjaxPlugin[]) {
+  put<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAjaxPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.PUT, url }, plugins)
   }
 
-  post<T = AxiosResponse>(url: string, option: AjaxConfig = {}, ...plugins: NiceAjaxPlugin[]) {
+  post<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAjaxPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.POST, url }, plugins)
   }
 
-  upload<T = AxiosResponse>(url: string, data: ComplexObject = {}, meta: AjaxConfigMeta = {}) {
+  upload<T = AxiosResponse>(url: string, data: ComplexObject = {}, meta: NiceAxiosConfigMeta = {}) {
     return this.post<T>(url, {
       data,
       meta: { upload: true, aes: false, ...meta },
     })
   }
 
-  download<T>(url: string, data: ComplexObject = {}, meta: AjaxConfigMeta = {}) {
+  download<T>(url: string, data: ComplexObject = {}, meta: NiceAxiosConfigMeta = {}) {
     return this.post<T>(url, {
       responseType: 'blob',
       data,
@@ -81,7 +88,7 @@ export class NiceAjaxContainer {
     return this.$agent
   }
 
-  cancelAll() {
+  cancelAllRequests() {
     this.$canceler.removeAllPending()
   }
 }

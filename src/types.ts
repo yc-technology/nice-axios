@@ -15,7 +15,7 @@ export interface NiceAxiosOptions {
   baseURL?: string
   prefixURL?: string
   name?: string
-  afterPluginOption?: AjaxAfterOptions
+  afterPluginOption?: NiceAxiosAfterOptions
 
   /**
    * header key
@@ -29,7 +29,7 @@ export interface NiceAxiosOptions {
   storageTokenFieldKey?: string
 
   getToken?: () => Promise<string> | string
-  defaultMeta?: AjaxConfigMeta
+  defaultMeta?: NiceAxiosConfigMeta
 }
 
 export interface BusinessAjaxResult extends ComplexObject {
@@ -52,7 +52,7 @@ export interface InnerError {
   [key: string]: any
 }
 
-export interface AjaxAfterOptions {
+export interface NiceAxiosAfterOptions {
   /**
    * 成功的指示状态码
    * default: 00000
@@ -77,26 +77,25 @@ export interface AjaxAfterOptions {
    */
   messageFieldKey?: string
 
-  handleCustomSuccess?: (res: AjaxResponse, meta: AjaxConfigMeta, options?: AjaxAfterOptions) => AjaxResponse
+  handleCustomSuccess?: (res: AjaxResponse, config: NiceAxiosConfig, options?: NiceAxiosAfterOptions) => AjaxResponse
 
   /**
    * 根据不同的错误码和描述信息执行某些操作，属于业务异常的处理都在这里订阅
    */
-  onCatchBusinessError?: Action4<string | number, string, BusinessAjaxResult, AjaxConfigMeta | undefined>
+  onCatchBusinessError?: Action4<string | number, string, AxiosResponse, NiceAxiosConfig | undefined>
   /**
    * 根据不同的 HTTP 状态码和描述信息执行某些操作：
    * 额外的特殊状态码，由组件库定义：
    * :timeout => 表示超时
    * :networkError => 表示网络异常
    */
-  onCatchAxiosError?: Action2<AxiosError | string, AjaxConfigMeta | undefined>
+  onCatchAxiosError?: Action2<AxiosError, NiceAxiosConfigMeta | undefined>
 }
 
-export interface AjaxConfigMeta extends ComplexObject {
+export interface NiceAxiosConfigMeta extends ComplexObject {
   form?: boolean
   upload?: boolean
   joinPrefix?: boolean
-  isTransformRequestResult?: boolean
   /**
    * 禁止处理响应数据
    */
@@ -105,17 +104,26 @@ export interface AjaxConfigMeta extends ComplexObject {
   // merge request
   merge?: boolean
   mergeTimeout?: number
-  addToken?: boolean
+  /**
+   * 是否需要添加 token
+   */
+  isTokenRequired?: boolean
+
+  /**
+   * 是否需要 signal
+   */
+  isSignalRequired?: boolean
 }
 
-export interface AjaxConfig extends AxiosRequestConfig {
+export interface NiceAxiosConfig extends AxiosRequestConfig {
   url?: string
   method?: Method | string
-  meta?: AjaxConfigMeta
+  meta?: NiceAxiosConfigMeta
   headers?: ComplexObject
   params?: string | ComplexObject | any
   data?: string | ComplexObject | any
   $canceler?: AxiosCanceler
+  timestamp?: string
   [key: string]: any
 }
 
@@ -123,7 +131,7 @@ export interface AjaxResponse extends ComplexObject {
   data: any
   status: number
   statusText: string
-  config: AjaxConfig
+  config: NiceAxiosConfig
   headers: ComplexObject
 }
 
@@ -151,7 +159,7 @@ export interface AjaxResponse extends ComplexObject {
  * }
  * ```
  */
-export type NiceAjaxExecutor = ComposePlugin<AjaxResponse, AjaxConfig>
+export type NiceAjaxExecutor = ComposePlugin<AjaxResponse, NiceAxiosConfig>
 
 export interface NiceAjaxPluginConfig {
   desc: string
@@ -162,16 +170,16 @@ export interface NiceAjaxPluginConfig {
 export type NiceAjaxPlugin = NiceAjaxExecutor | NiceAjaxPluginConfig
 
 export interface AjaxExecutor {
-  (config: AjaxConfig): Promise<AjaxResponse>
+  (config: NiceAxiosConfig): Promise<AjaxResponse>
 }
 
 export interface AjaxAgent {
   add(list: NiceAjaxPlugin[]): AjaxAgent
   attach(callback: (list: NiceAjaxPlugin[]) => ComposeResult<NiceAjaxPlugin[]>): Promise<AjaxAgent>
-  exec(args: AjaxConfig): Promise<AjaxResponse>
+  exec(args: NiceAxiosConfig): Promise<AjaxResponse>
 }
 
-export interface TAjaxConfig<TParams, TData> extends AjaxConfig {
+export interface TAjaxConfig<TParams, TData> extends NiceAxiosConfig {
   params?: TParams
   data?: TData
 }

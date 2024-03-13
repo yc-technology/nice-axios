@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
 import { isFunction } from 'lodash-es'
-import type { AjaxAgent, AjaxConfig, AjaxExecutor, NiceAjaxPlugin, AjaxResponse, ComposeResult } from './types'
+import type { AjaxAgent, NiceAxiosConfig, AjaxExecutor, NiceAjaxPlugin, AjaxResponse, ComposeResult } from './types'
 import { compose } from './utils/compose'
 
 export { axios }
@@ -10,7 +10,7 @@ const getOrder = (plugin: NiceAjaxPlugin) => (isFunction(plugin) ? 0 : plugin.or
 
 export const fetch = (defaultAction: AjaxExecutor, plugins: NiceAjaxPlugin[]): AjaxAgent => {
   // 缓存执行器
-  let cachedExecutor: (config: AjaxConfig) => ComposeResult<AjaxResponse>
+  let cachedExecutor: (config: NiceAxiosConfig) => ComposeResult<AjaxResponse>
   return {
     add(list) {
       if (!list.length) return this

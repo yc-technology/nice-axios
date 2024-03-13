@@ -1,8 +1,8 @@
 import { isFunction, isString } from 'lodash-es'
-import type { Action2, AjaxConfig, Func } from '../types'
+import type { Action2, NiceAxiosConfig, Func } from '../types'
 import { ContentTypeEnum, AjaxMethods } from '../constants'
 
-export function getMultipartConfig(config: AjaxConfig) {
+export function getMultipartConfig(config: NiceAxiosConfig) {
   const { data } = config
   const formData = new FormData()
 

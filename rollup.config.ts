@@ -7,7 +7,7 @@ import pkg from './package.json'
 export default defineConfig({
   input: 'src/index.ts',
   plugins: [json(), typescript(), terser()],
-  external: ['axios', 'lodash-es'],
+  external: ['axios', 'lodash-es', 'vue'],
   output: [
     {
       format: 'cjs',
