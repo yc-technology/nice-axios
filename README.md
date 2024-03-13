@@ -1,6 +1,24 @@
 # NiceAxios
 
-[![NPM version](https://img.shields.io/npm/v/nice-axios?color=a1b858&label=)](https://www.npmjs.com/package/nice-axios)
+<p align="center">
+  <a href="https://www.npmjs.com/package/nice-axios"><img src="https://badgen.net/npm/v/nice-axios" alt="npm package">
+  </a>
+  <a href="./LICENSE"><img src="https://img.shields.io/github/license/sixdjango/nice-axios" alt="LICENSE">
+  </a>
+  <a href=""><img src="https://img.shields.io/github/package-json/author/sixdjango/nice-axios
+  " alt="author">
+  </a>
+  <a href="https://www.npmjs.com/package/nice-axios"><img src="https://img.shields.io/npm/dy/nice-axios" alt="npm downloads">
+  </a>
+  <a href=""><img src="https://img.shields.io/github/actions/workflow/status/sixdjango/nice-axios/release.yml?branch=main
+  " alt="github action state">
+  </a>
+  <a href=""><img src="https://img.shields.io/github/languages/top/sixdjango/nice-axios" alt="language top">
+  </a>
+  <a href=""><img src="https://img.shields.io/github/commits-since/sixdjango/nice-axios/latest" alt="git-hub-commits-since-latest-release">
+  </a>
+
+</p>
 
 NiceAxios 是一个功能强大的库，它旨在为开发者提供一个更灵活、易扩展的方式来使用 [Axios](https://axios-http.com/)，一个广泛使用的基于 `Promise` 的 HTTP 客户端。通过利用"洋葱模型"（例如著名的 [Koa](https://koajs.com/) 服务器就是使用了这个模型）构建的插件系统，`NiceAxios` 为 `Axios` 请求流程提供了一种切面编程的方法，从而让开发者能够以模块化的方式拦截请求和响应，注入自定义逻辑或功能，以及重新定义请求的行为。
 核心特性
