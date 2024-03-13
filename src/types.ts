@@ -77,7 +77,26 @@ export interface NiceAxiosAfterOptions {
    */
   messageFieldKey?: string
 
-  handleCustomSuccess?: (res: AjaxResponse, config: NiceAxiosConfig, options?: NiceAxiosAfterOptions) => AjaxResponse
+  /**
+   * 当接口成功 200 之后的统一回调方法
+   * @param res
+   * @param config
+   * @returns
+   */
+  onResponseSuccess?: (res: AxiosResponse, config: NiceAxiosConfig) => void
+
+  /**
+   * 自定义解包 response.data 的方法
+   * @param res
+   * @param config
+   * @param options
+   * @returns
+   */
+  customUnwrapResponseData?: (
+    res: AjaxResponse,
+    config: NiceAxiosConfig,
+    options?: NiceAxiosAfterOptions,
+  ) => AjaxResponse
 
   /**
    * 根据不同的错误码和描述信息执行某些操作，属于业务异常的处理都在这里订阅
@@ -102,7 +121,16 @@ export interface NiceAxiosConfigMeta extends ComplexObject {
   mergeTimeout?: number
 
   /**
+   * 是否需要解包 response.data
+   * @default true
+   * 优先级第二
+   */
+  isOnlyUnwrapResponseData?: boolean
+
+  /**
    * 返回原始数据
+   * @default true
+   * 优先级最高
    */
   isOriginalResponse?: boolean
 

@@ -14,15 +14,22 @@ import { maybeFnCall } from './utils'
 const handleSuccess = (res: AxiosResponse, config: NiceAxiosConfig, options?: NiceAxiosAfterOptions) => {
   // 默认
   const { meta = {} } = config
-  const { isOriginalResponse = true } = meta
-  const { handleCustomSuccess } = options || {}
+  const { isOriginalResponse = true, isOnlyUnwrapResponseData = true } = meta
+  const { customUnwrapResponseData, onResponseSuccess } = options || {}
+
+  // 成功回调方便做提示统一逻辑
+  onResponseSuccess?.(res, config)
+
   // 不进行任何处理，直接返回
   if (isOriginalResponse) return res
 
-  if (handleCustomSuccess) return handleCustomSuccess(res, meta, options)
+  if (customUnwrapResponseData) return customUnwrapResponseData(res, meta, options)
 
   // 用于页面代码可能需要直接获取code，data，message这些信息时开启
   const result = res.data
+
+  // 只返回 data 数据，不再执行后面的自定义逻辑
+  if (isOnlyUnwrapResponseData) return result
 
   if (!result) {
     // return '[HTTP] Request has no return value';
