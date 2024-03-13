@@ -24,7 +24,7 @@
 
 <div align="center">
 
-[![onion-model-image](./assets/onion-model.png)](./assets/onion-model.png)
+[![onion-model-image](/assets/onion-model.png)](/assets/onion-model.png)
 
 </div>
 
