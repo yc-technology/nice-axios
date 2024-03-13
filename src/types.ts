@@ -96,14 +96,16 @@ export interface NiceAxiosConfigMeta extends ComplexObject {
   form?: boolean
   upload?: boolean
   joinPrefix?: boolean
-  /**
-   * 禁止处理响应数据
-   */
-  disableRespProcessing?: boolean
   showErrorTip?: boolean
   // merge request
   merge?: boolean
   mergeTimeout?: number
+
+  /**
+   * 返回原始数据
+   */
+  isOriginalResponse?: boolean
+
   /**
    * 是否需要添加 token
    */

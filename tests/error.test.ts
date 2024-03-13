@@ -5,7 +5,7 @@ import { createNiceAxios } from '~/instance'
 test('test error', async () => {
   const niceAxios = createNiceAxios({
     defaultMeta: {
-      disableRespProcessing: false,
+      isOriginalResponse: false,
     },
 
     afterPluginOption: {},

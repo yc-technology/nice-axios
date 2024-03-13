@@ -14,10 +14,10 @@ import { maybeFnCall } from './utils'
 const handleSuccess = (res: AxiosResponse, config: NiceAxiosConfig, options?: NiceAxiosAfterOptions) => {
   // 默认
   const { meta = {} } = config
-  const { disableRespProcessing = true } = meta
+  const { isOriginalResponse = true } = meta
   const { handleCustomSuccess } = options || {}
   // 不进行任何处理，直接返回
-  if (disableRespProcessing) return res
+  if (isOriginalResponse) return res
 
   if (handleCustomSuccess) return handleCustomSuccess(res, meta, options)
 
