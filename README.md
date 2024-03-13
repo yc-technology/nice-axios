@@ -5,14 +5,14 @@
   </a>
   <a href="./LICENSE"><img src="https://img.shields.io/github/license/sixdjango/nice-axios" alt="LICENSE">
   </a>
-  <a href=""><img src="https://img.shields.io/github/package-json/author/sixdjango/nice-axios
+  <!-- <a href=""><img src="https://img.shields.io/github/package-json/author/sixdjango/nice-axios
   " alt="author">
-  </a>
+  </a> -->
   <a href="https://www.npmjs.com/package/nice-axios"><img src="https://img.shields.io/npm/dy/nice-axios" alt="npm downloads">
   </a>
-  <a href=""><img src="https://img.shields.io/github/actions/workflow/status/sixdjango/nice-axios/release.yml?branch=main
+  <!-- <a href=""><img src="https://img.shields.io/github/actions/workflow/status/sixdjango/nice-axios/release.yml?branch=main
   " alt="github action state">
-  </a>
+  </a> -->
   <a href=""><img src="https://img.shields.io/github/languages/top/sixdjango/nice-axios" alt="language top">
   </a>
   <a href=""><img src="https://img.shields.io/github/commits-since/sixdjango/nice-axios/latest" alt="git-hub-commits-since-latest-release">
