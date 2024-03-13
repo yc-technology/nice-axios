@@ -1,13 +1,14 @@
-# nice-axios
+# NiceAxios
 
 [![NPM version](https://img.shields.io/npm/v/nice-axios?color=a1b858&label=)](https://www.npmjs.com/package/nice-axios)
 
-the onion model of axios by @django
+NiceAxios 是一个功能强大的库，它旨在为开发者提供一个更灵活、易扩展的方式来使用 Axios，一个广泛使用的基于 Promise 的 HTTP 客户端。通过利用洋葱模型构建的插件系统，NiceAxios 为 Axios 请求流程提供了一种切面编程的方法，从而让开发者能够以模块化的方式拦截请求和响应，注入自定义逻辑或功能，以及重新定义请求的行为。
+核心特性
 
-- Tree-shakable ESM
-- Fully typed - with TSDocs
-
-> This package is designed to be used as `devDependencies` and bundled into your dist.
+• 灵活的插件系统：使用洋葱模型构建的插件机制，允许你以简单、直观的方式堆叠和执行中间件。
+• 切面编程支持：为 Axios 请求和响应提供了一种切面编程的解决方案，使得操作更加灵活，方便在请求处理过程中注入自定义逻辑。
+• 易于扩展：可以轻松实现并集成多种插件来满足不同的业务需求，提高代码的复用性和项目的可维护性。
+• 无缝集成：设计上允许与现有的 Axios 实例和配置无缝集成，确保了对现有项目的友好支持。
 
 ## 🚀 Quick Start
 
@@ -77,7 +78,7 @@ const addTokenPlugin: NiceAjaxExecutor = async (next, config) => {
 
 - Option
 
-| 属性              | 类型             | 描述              |
+| Attributes        | Type             | Description       |
 | ----------------- | ---------------- | ----------------- |
 | baseURL           | string           | base url          |
 | prefixURL         | string           | prefix url        |
@@ -85,7 +86,7 @@ const addTokenPlugin: NiceAjaxExecutor = async (next, config) => {
 | afterPluginOption | AjaxAfterOptions | afterPluginOption |
 | defaultMeta       | AjaxConfigMeta   | defaultMeta       |
 
-## 原理
+## 🤔 What
 
 ```ts
 /**
@@ -100,7 +101,7 @@ const addTokenPlugin: NiceAjaxExecutor = async (next, config) => {
 export type NiceAjaxExecutor = ComposePlugin<AjaxResponse, AjaxConfig>
 ```
 
-### 例子
+### 🌰 Plugin Example
 
 ```ts
 // 插件 1
