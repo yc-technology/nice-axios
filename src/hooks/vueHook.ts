@@ -9,7 +9,7 @@ let onUnMounted: (
   // 通过动态导入 Vue 来检查是否安装了 Vue
 ;(async () => {
   try {
-    const vue = await import('vue')
+    const vue = require('vue')
     onUnMounted = vue.onUnmounted
     // 使用 vue
   } catch (error) {
