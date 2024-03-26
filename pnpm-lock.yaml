@@ -52,6 +52,9 @@ devDependencies:
   '@yc-tech/eslint-config':
     specifier: ^0.1.1
     version: 0.1.1(prettier@3.2.5)(typescript@5.3.3)
+  '@yc-tech/prettier-config':
+    specifier: ^0.1.0
+    version: 0.1.0
   archiver:
     specifier: ^6.0.1
     version: 6.0.1
@@ -1643,6 +1646,10 @@ packages:
       - prettier
       - supports-color
       - typescript
+    dev: true
+
+  /@yc-tech/prettier-config@0.1.0:
+    resolution: {integrity: sha512-2XKagWSKnMxOJoE5WY36SXOhRlFH7UQ4BuXYUQFdiCSs8eyIVlNFF3Dv4hauK+zgMOtV48Zm/pQv9f40YLJC3g==}
     dev: true
 
   /JSONStream@1.3.5:
