@@ -48,7 +48,7 @@ export const buildDefaultBeforePlugin: (
   // -----------------add timestamp-----------------
   if (config.method === AjaxMethods.GET) {
     // some get request need to add timestamp to prevent cache
-    config.params = config.data
+    if (!config.params && config.data) config.params = config.data
   } else {
     // initialize method, default value POST method
 
