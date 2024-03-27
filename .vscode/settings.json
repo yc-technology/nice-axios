@@ -12,6 +12,6 @@
   ],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "html.format.wrapLineLength": 140,
+  "html.format.wrapLineLength": 160,
   "cSpell.words": ["clsxm", "consola"]
 }
