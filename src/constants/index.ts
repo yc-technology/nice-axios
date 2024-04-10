@@ -18,7 +18,7 @@ export const AjaxMethods = {
   LINK: 'LINK',
   LINK_LOWER: 'link',
   UNLINK: 'UNLINK',
-  UNLINK_LOWER: 'unlink',
+  UNLINK_LOWER: 'unlink'
 } as const
 
 export enum ContentTypeEnum {
@@ -29,7 +29,7 @@ export enum ContentTypeEnum {
   // form-data  upload
   FORM_DATA = 'multipart/form-data;charset=UTF-8',
   STREAM = 'application/octet-stream',
-  XPROTO = 'application/x-protobuf',
+  XPROTO = 'application/x-protobuf'
 }
 
 // 接口返回值data不能为这个，否则会判为请求失败
@@ -41,7 +41,7 @@ export enum NiceAxiosErrorCode {
   /**
    * 请求被取消
    */
-  ERR_CANCELED = 'ERR_CANCELED',
+  ERR_CANCELED = 'ERR_CANCELED'
 }
 
 export enum NiceAxiosPluginOrder {
@@ -72,5 +72,5 @@ export enum NiceAxiosPluginOrder {
   /**
    * 通用后置逻辑, 最优先被执行一般处理原始数据
    */
-  GENERAL_AFTER_PLUGIN = 8900,
+  GENERAL_AFTER_PLUGIN = 8900
 }
