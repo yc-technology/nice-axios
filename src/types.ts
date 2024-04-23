@@ -113,7 +113,7 @@ export interface NiceAxiosAfterOptions {
    * :timeout => 表示超时
    * :networkError => 表示网络异常
    */
-  onCatchAxiosError?: Action2<AxiosError, NiceAxiosConfigMeta | undefined>
+  onCatchAxiosError?: Action2<AxiosError<any>, NiceAxiosConfigMeta | undefined>
 }
 
 export interface NiceAxiosConfigMeta extends ComplexObject {
