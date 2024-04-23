@@ -22,7 +22,7 @@ export const buildDefaultBeforePlugin: (
   // default showErrorTip: true
   if (isUndefined(config.meta.showErrorTip)) config.meta.showErrorTip = true
 
-  const { joinPrefix, isTokenRequired: addToken = false } = meta
+  const { joinPrefix, isTokenRequired: addToken = true } = meta
   const { prefixURL, baseURL = '/' } = initOptions || {}
 
   if (!config.baseURL) config.baseURL = baseURL
@@ -36,7 +36,7 @@ export const buildDefaultBeforePlugin: (
   // add token default addToken: false
   // -----------------add token-----------------
   if (addToken) {
-    let token = ''
+    let token
     if (getToken) {
       token = getToken && (await getToken())
     } else {

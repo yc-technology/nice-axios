@@ -28,7 +28,7 @@ export interface NiceAxiosOptions {
    */
   storageTokenFieldKey?: string
 
-  getToken?: () => Promise<string> | string
+  getToken?: () => Promise<string | undefined> | string | undefined
   defaultMeta?: NiceAxiosConfigMeta
 }
 
@@ -95,13 +95,18 @@ export interface NiceAxiosAfterOptions {
   customUnwrapResponseData?: (
     res: AjaxResponse,
     config: NiceAxiosConfig,
-    options?: NiceAxiosAfterOptions,
+    options?: NiceAxiosAfterOptions
   ) => AjaxResponse
 
   /**
    * 根据不同的错误码和描述信息执行某些操作，属于业务异常的处理都在这里订阅
    */
-  onCatchBusinessError?: Action4<string | number, string, AxiosResponse, NiceAxiosConfig | undefined>
+  onCatchBusinessError?: Action4<
+    string | number,
+    string,
+    AxiosResponse,
+    NiceAxiosConfig | undefined
+  >
   /**
    * 根据不同的 HTTP 状态码和描述信息执行某些操作：
    * 额外的特殊状态码，由组件库定义：
@@ -251,7 +256,17 @@ export interface Fun8c<T1, T2, T3, T4, T5, T6, T7, T8, TResult> {
 }
 
 export interface Func9<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> {
-  (arg1: T1, arg2: T2, arg3: T3, arg4: T4, arg5: T5, arg6: T6, arg7: T7, arg8: T8, arg9: T9): TResult
+  (
+    arg1: T1,
+    arg2: T2,
+    arg3: T3,
+    arg4: T4,
+    arg5: T5,
+    arg6: T6,
+    arg7: T7,
+    arg8: T8,
+    arg9: T9
+  ): TResult
 }
 
 export interface Action<TParameters extends any[] = []> {
