@@ -2,7 +2,7 @@ import { NiceAxios, NiceAxiosConfig } from '..'
 import type React from 'react'
 
 let useEffect: (effect: React.EffectCallback, deps?: React.DependencyList | undefined) => void
-let useRef: <T>(initialValue: T) => React.MutableRefObject<T>
+let useRef: <T>(initialValue?: T) => React.MutableRefObject<T>
   // let useCallback: <T extends (...args: any[]) => any>(callback: T, deps: React.DependencyList) => T
   // 通过动态导入 React 来检查是否安装了 React
 ;(async () => {
@@ -29,6 +29,7 @@ export function useAbortRequestReactHook<T = any, R = any>(
   fn: (arg: T, config?: NiceAxiosConfig) => Promise<R>
 ) {
   const controllers = useRef<AbortController[]>([])
+  const currentController = useRef<AbortController>()
 
   const handler = async (arg: T, config?: NiceAxiosConfig): Promise<R> => {
     const controller = new AbortController()
@@ -49,12 +50,16 @@ export function useAbortRequestReactHook<T = any, R = any>(
     }
   }, [])
 
-  function cancel() {
+  function cancelAll() {
     controllers.current.forEach((controller) => {
       controller.abort()
     })
     controllers.current.length = 0
   }
 
-  return { handler, controllers, cancel }
+  function cancel() {
+    currentController.current?.abort()
+  }
+
+  return { handler, controllers, currentController, cancel, cancelAll }
 }

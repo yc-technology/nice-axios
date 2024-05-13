@@ -2,15 +2,16 @@ import type { ComponentInternalInstance } from 'vue'
 import { NiceAxios, NiceAxiosConfig } from '..'
 
 let onUnMounted: (
-    hook: () => any,
-    target?: ComponentInternalInstance | null | undefined
-  ) => false | Function | undefined
-
+  hook: () => any,
+  target?: ComponentInternalInstance | null | undefined
+) => false | Function | undefined
+let ref: <T>(initialValue?: T) => { value: T }
   // 通过动态导入 Vue 来检查是否安装了 Vue
 ;(async () => {
   try {
     const vue = require('vue')
     onUnMounted = vue.onUnmounted
+    ref = vue.ref
     // 使用 vue
   } catch (error) {
     //   console.error('Vue is not installed.');
@@ -36,9 +37,11 @@ export function useAbortRequestVueHook<T = any, R = any>(
   fn: (arg: T, config?: NiceAxiosConfig) => Promise<R>
 ) {
   const controllers: AbortController[] = []
+  const currentController = ref<AbortController>()
 
   const handler = async (arg: T, config?: NiceAxiosConfig): Promise<R> => {
     const controller = new AbortController()
+    currentController.value = controller
     controllers.push(controller)
     const promise = fn(arg, { ...config, signal: controller.signal }).finally(() => {
       const index = controllers.indexOf(controller)
@@ -54,11 +57,15 @@ export function useAbortRequestVueHook<T = any, R = any>(
   })
 
   function cancel() {
+    currentController.value?.abort()
+  }
+
+  function cancelAll() {
     controllers.forEach((controller) => {
       controller.abort()
     })
     controllers.length = 0
   }
 
-  return { handler, controllers, cancel }
+  return { handler, controllers, cancel, cancelAll }
 }
