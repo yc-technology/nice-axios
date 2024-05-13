@@ -1,9 +1,9 @@
 import type { ComponentInternalInstance } from 'vue'
-import { NiceAxios } from '..'
+import { NiceAxios, NiceAxiosConfig } from '..'
 
 let onUnMounted: (
     hook: () => any,
-    target?: ComponentInternalInstance | null | undefined,
+    target?: ComponentInternalInstance | null | undefined
   ) => false | Function | undefined
 
   // 通过动态导入 Vue 来检查是否安装了 Vue
@@ -30,4 +30,35 @@ export function useNiceAxiosCancelAllRequestsVueHook(instance: NiceAxios) {
     // 取消所有的请求
     instance.$canceler.cancelAllRequests()
   })
+}
+
+export function useAbortRequestVueHook<T = any, R = any>(
+  fn: (arg: T, config?: NiceAxiosConfig) => Promise<R>
+) {
+  const controllers: AbortController[] = []
+
+  const handler = async (arg: T, config?: NiceAxiosConfig): Promise<R> => {
+    const controller = new AbortController()
+    controllers.push(controller)
+    const promise = fn(arg, { ...config, signal: controller.signal }).finally(() => {
+      const index = controllers.indexOf(controller)
+      index > -1 && controllers.splice(index, 1)
+    })
+    return promise
+  }
+  onUnMounted(() => {
+    // 取消所有的请求
+    controllers.forEach((controller) => {
+      controller.abort()
+    })
+  })
+
+  function clear() {
+    controllers.forEach((controller) => {
+      controller.abort()
+    })
+    controllers.length = 0
+  }
+
+  return { handler, controllers, clear }
 }
