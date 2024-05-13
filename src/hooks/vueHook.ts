@@ -53,12 +53,12 @@ export function useAbortRequestVueHook<T = any, R = any>(
     })
   })
 
-  function clear() {
+  function cancel() {
     controllers.forEach((controller) => {
       controller.abort()
     })
     controllers.length = 0
   }
 
-  return { handler, controllers, clear }
+  return { handler, controllers, cancel }
 }

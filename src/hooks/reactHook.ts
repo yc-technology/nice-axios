@@ -49,12 +49,12 @@ export function useAbortRequestReactHook<T = any, R = any>(
     }
   }, [])
 
-  function clear() {
+  function cancel() {
     controllers.current.forEach((controller) => {
       controller.abort()
     })
     controllers.current.length = 0
   }
 
-  return { handler, controllers, clear }
+  return { handler, controllers, cancel }
 }
