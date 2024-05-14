@@ -22,6 +22,16 @@
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js"
     },
+    "./vue-hooks": {
+      "types": "./types/hooks/vueHooks.d.ts",
+      "import": "./dist/esm/vue-hooks.js",
+      "require": "./dist/cjs/vue-hooks.js"
+    },
+    "./react-hooks": {
+      "types": "./types/hooks/reactHooks.d.ts",
+      "import": "./dist/esm/react-hooks.js",
+      "require": "./dist/cjs/react-hooks.js"
+    },
     "./package.json": "./package.json"
   },
   "author": "django",

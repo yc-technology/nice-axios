@@ -1,2 +1,2 @@
-export * from './vueHook'
-export * from './reactHook'
+export * from './vueHooks'
+export * from './reactHooks'

@@ -1,24 +1,5 @@
-import type { ComponentInternalInstance } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import { NiceAxios, NiceAxiosConfig } from '..'
-
-let onUnMounted: (
-  hook: () => any,
-  target?: ComponentInternalInstance | null | undefined
-) => false | Function | undefined
-let ref: <T>(initialValue?: T) => { value: T }
-  // 通过动态导入 Vue 来检查是否安装了 Vue
-;(async () => {
-  try {
-    const vue = require('vue')
-    onUnMounted = vue.onUnmounted
-    ref = vue.ref
-    // 使用 vue
-  } catch (error) {
-    //   console.error('Vue is not installed.');
-    // 处理错误或提供备用逻辑
-  }
-})()
-
 /**
  * @description: 在 vue 组件销毁时取消所有的请求
  * @tip
@@ -27,7 +8,7 @@ let ref: <T>(initialValue?: T) => { value: T }
  * @param instance
  */
 export function useNiceAxiosCancelAllRequestsVueHook(instance: NiceAxios) {
-  onUnMounted(() => {
+  onUnmounted(() => {
     // 取消所有的请求
     instance.$canceler.cancelAllRequests()
   })
@@ -49,7 +30,7 @@ export function useAbortRequestVueHook<T = any, R = any>(
     })
     return promise
   }
-  onUnMounted(() => {
+  onUnmounted(() => {
     // 取消所有的请求
     controllers.forEach((controller) => {
       controller.abort()
