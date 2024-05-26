@@ -11,9 +11,15 @@ importers:
       axios:
         specifier: ^1.6.7
         version: 1.6.7
+      commander:
+        specifier: ^12.1.0
+        version: 12.1.0
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      swagger-typescript-api:
+        specifier: ^13.0.3
+        version: 13.0.3
     devDependencies:
       '@commitlint/cli':
         specifier: ^18.4.4
@@ -63,9 +69,6 @@ importers:
       bumpp:
         specifier: ^9.2.1
         version: 9.3.0
-      commander:
-        specifier: ^12.1.0
-        version: 12.1.0
       conventional-changelog:
         specifier: ^5.1.0
         version: 5.1.0
@@ -99,9 +102,6 @@ importers:
       simple-git-hooks:
         specifier: ^2.9.0
         version: 2.9.0
-      swagger-typescript-api:
-        specifier: ^13.0.3
-        version: 13.0.3
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
