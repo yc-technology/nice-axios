@@ -61,6 +61,7 @@ function buildConfig() {
           file: `dist/iife/${target}.js`,
           name: 'Test',
           extend: true,
+          sourcemap: true,
           globals: {
             axios: 'axios',
             'lodash-es': '_'

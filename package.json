@@ -109,7 +109,7 @@
     "vue": "^3.4.21"
   },
   "dependencies": {
-    "axios": "^1.6.7",
+    "axios": "^1.7.2",
     "commander": "^12.1.0",
     "swagger-typescript-api": "^13.0.3",
     "lodash-es": "^4.17.21"
