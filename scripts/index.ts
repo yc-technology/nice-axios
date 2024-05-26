@@ -19,11 +19,11 @@ export function generateSwaggerApi(options: { dir: string; url: string }) {
   const { dir, url } = options
   generateApi.generateApi({
     name: 'ApiModel.ts',
-    templates: path.resolve(__dirname, 'templates'),
+    templates: path.resolve(__dirname, '../../templates'),
     extraTemplates: [
       {
         name: 'nice-axios.ts',
-        path: path.resolve(__dirname, 'templates/nice-axios.ejs')
+        path: path.resolve(__dirname, '../../templates/nice-axios.ejs')
       }
     ],
     cleanOutput: true,

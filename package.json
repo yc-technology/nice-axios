@@ -13,7 +13,7 @@
   "unpkg": "dist/iife/index.js",
   "miniprogram": "dist/cjs",
   "bin": {
-    "nice-axios": "dist/script/index.js"
+    "nice-axios": "dist/script/index.cjs"
   },
   "files": [
     "dist",

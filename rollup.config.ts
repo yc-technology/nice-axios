@@ -13,7 +13,7 @@ function buildScript() {
       {
         format: 'cjs',
         esModule: false,
-        file: `dist/script/index.js`,
+        file: `dist/script/index.cjs`,
         sourcemap: true
       }
     ]
