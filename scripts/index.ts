@@ -5,18 +5,18 @@ import { Command } from 'commander'
 const program = new Command()
 
 program
-  .requiredOption('-u, --url <url>', 'swagger url')
+  .option('-u, --url <url>', 'swagger url')
+  .option('-p, --path <path>', 'swagger path')
   .option('-d, --dir <dir>', 'output dir', 'apis/swagger')
 
-const { url, dir } = program.parse(process.argv).opts()
+const { url, dir, path: swaggerPath } = program.parse(process.argv).opts()
 
 const __dirname = new URL('.', import.meta.url).pathname
 
 console.info('url:', url)
 console.info('__dirname:', __dirname)
 
-export function generateSwaggerApi(options: { dir: string; url: string }) {
-  const { dir, url } = options
+export function generateSwaggerApi() {
   generateApi.generateApi({
     name: 'ApiModel.ts',
     templates: path.resolve(__dirname, '../../templates'),
@@ -29,6 +29,7 @@ export function generateSwaggerApi(options: { dir: string; url: string }) {
     cleanOutput: true,
     output: path.resolve(process.cwd(), dir),
     url,
+    input: swaggerPath ? path.resolve(process.cwd(), swaggerPath) : undefined,
     httpClientType: 'axios',
     singleHttpClient: true,
     generateClient: true,
@@ -39,7 +40,4 @@ export function generateSwaggerApi(options: { dir: string; url: string }) {
   })
 }
 
-generateSwaggerApi({
-  dir,
-  url
-})
+generateSwaggerApi()
