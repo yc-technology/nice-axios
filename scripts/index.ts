@@ -13,9 +13,6 @@ const { url, dir, path: swaggerPath } = program.parse(process.argv).opts()
 
 const __dirname = new URL('.', import.meta.url).pathname
 
-console.info('url:', url)
-console.info('__dirname:', __dirname)
-
 export function generateSwaggerApi() {
   generateApi.generateApi({
     name: 'ApiModel.ts',
