@@ -8,8 +8,9 @@ program
   .option('-u, --url <url>', 'swagger url')
   .option('-p, --path <path>', 'swagger path')
   .option('-d, --dir <dir>', 'output dir', 'apis/swagger')
+  .option('-c', '--clean', 'clean output dir')
 
-const { url, dir, path: swaggerPath } = program.parse(process.argv).opts()
+const { url, dir, path: swaggerPath, clean } = program.parse(process.argv).opts()
 
 const __dirname = new URL('.', import.meta.url).pathname
 
@@ -23,7 +24,7 @@ export function generateSwaggerApi() {
         path: path.resolve(__dirname, '../../templates/nice-axios.ejs')
       }
     ],
-    cleanOutput: true,
+    cleanOutput: clean,
     output: path.resolve(process.cwd(), dir),
     url,
     input: swaggerPath ? path.resolve(process.cwd(), swaggerPath) : undefined,
