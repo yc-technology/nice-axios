@@ -1,7 +1,7 @@
 import path from 'node:path'
 import generateApi from 'swagger-typescript-api'
 import { Command } from 'commander'
-
+import { fileURLToPath } from 'url'
 const program = new Command()
 
 program
@@ -12,7 +12,11 @@ program
 
 const { url, dir, path: swaggerPath, clean } = program.parse(process.argv).opts()
 
-const __dirname = new URL('.', import.meta.url).pathname
+// 获取当前文件的路径
+const __filename = fileURLToPath(import.meta.url)
+
+// 获取当前文件的目录
+const __dirname = path.dirname(__filename)
 
 export function generateSwaggerApi() {
   generateApi.generateApi({
