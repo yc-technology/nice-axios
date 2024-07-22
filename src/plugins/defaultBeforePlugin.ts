@@ -1,5 +1,5 @@
 import { isString, isUndefined } from 'lodash-es'
-import type { Func, NiceAjaxExecutor, NiceAxiosOptions } from '../types'
+import type { Func, NiceAxiosExecutor, NiceAxiosOptions } from '../types'
 import { stringifyParams } from '../utils'
 
 import { AjaxMethods, ContentTypeEnum } from '~/constants'
@@ -7,7 +7,7 @@ import { getMultipartConfig, isHttpUrl, maybeFnCall } from './utils'
 
 export const buildDefaultBeforePlugin: (
   options?: NiceAxiosOptions | Func<NiceAxiosOptions>
-) => NiceAjaxExecutor = (options) => async (next, originalConfig) => {
+) => NiceAxiosExecutor = (options) => async (next, originalConfig) => {
   let config = originalConfig
   const initOptions = maybeFnCall(options) || {}
   const { defaultMeta = {}, getToken, headerAuthFieldKey, storageTokenFieldKey } = initOptions

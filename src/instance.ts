@@ -1,8 +1,8 @@
+import type { Func, NiceAxiosOptions, NiceAxiosPlugin } from '.'
+import { buildDefaultAfterPlugin, buildDefaultBeforePlugin, NiceAxiosPluginOrder } from '.'
 import { NiceAxios } from './container'
 import { addCancelerPlugin, removeCancelerPlugin } from './plugins/ajaxCanceler'
 import { mergeRequestPlugin } from './plugins/mergeRequestPlugin'
-import { buildDefaultAfterPlugin, buildDefaultBeforePlugin, NiceAxiosPluginOrder } from '.'
-import type { NiceAjaxPluginConfig, Func, NiceAxiosOptions } from '.'
 let instance: NiceAxios
 
 // step 20
@@ -19,26 +19,30 @@ const getDefaultPlugins = (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) 
     {
       desc: '添加当前 Ajax 请求的手动取消功能：应该在所有插件中的第一个',
       order: NiceAxiosPluginOrder.CANCEL_REQUEST_BEFORE_PLUGIN,
-      executor: addCancelerPlugin,
+      executor: addCancelerPlugin
     },
-    { desc: '合并请求', order: NiceAxiosPluginOrder.MERGE_REQUEST_BEFORE_PLUGIN, executor: mergeRequestPlugin },
+    {
+      desc: '合并请求',
+      order: NiceAxiosPluginOrder.MERGE_REQUEST_BEFORE_PLUGIN,
+      executor: mergeRequestPlugin
+    },
     {
       desc: '基础业务前置插件',
       order: NiceAxiosPluginOrder.GENERAL_BEFORE_PLUGIN,
-      executor: buildDefaultBeforePlugin(options),
+      executor: buildDefaultBeforePlugin(options)
     },
 
     //-------------------------------------------- ↓ After Plugin ↓ --------------------------------------------
     {
       desc: '通用后置逻辑',
       order: NiceAxiosPluginOrder.GENERAL_AFTER_PLUGIN,
-      executor: buildDefaultAfterPlugin(options),
+      executor: buildDefaultAfterPlugin(options)
     },
     {
       desc: '移除当前请求的手动取消功能：应该在所有插件中的最后一个',
       order: NiceAxiosPluginOrder.REMOVE_CANCEL_REQUEST_AFTER_PLUGIN,
-      executor: removeCancelerPlugin,
-    },
+      executor: removeCancelerPlugin
+    }
   ]
 }
 
@@ -65,7 +69,7 @@ const getDefaultPlugins = (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) 
  */
 export const createNiceAxios = (
   options?: NiceAxiosOptions | Func<NiceAxiosOptions>,
-  customPlugins: NiceAjaxPluginConfig[] = [],
+  customPlugins: NiceAxiosPlugin[] = []
 ) => {
   return new NiceAxios([...getDefaultPlugins(options), ...customPlugins])
 }
@@ -75,8 +79,8 @@ export const createNiceAxios = (
  * @returns
  */
 export const getNiceAxiosInstance = (
-  customPlugins: NiceAjaxPluginConfig[] = [],
   options?: NiceAxiosOptions | Func<NiceAxiosOptions>,
+  customPlugins: NiceAxiosPlugin[] = []
 ) => {
   if (!instance) instance = createNiceAxios(options, customPlugins)
 

@@ -8,7 +8,7 @@ function buildScript() {
   return {
     input: 'scripts/index.ts',
     plugins: [json(), typescript(), terser(), addShebangPlugin({ include: 'dist/script/**.js' })],
-    external: ['swagger-typescript-api', 'node:path', 'url', 'commander'],
+    external: ['swagger-typescript-api', 'node:path', 'node:url', 'commander'],
     output: [
       {
         format: 'cjs',

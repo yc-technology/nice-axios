@@ -194,23 +194,42 @@ export interface AjaxResponse extends ComplexObject {
  * }
  * ```
  */
-export type NiceAjaxExecutor = ComposePlugin<AjaxResponse, NiceAxiosConfig>
+export type NiceAxiosExecutor = ComposePlugin<AjaxResponse, NiceAxiosConfig>
 
-export interface NiceAjaxPluginConfig {
+export interface NiceAxiosPluginConfig {
   desc: string
   order: number
-  executor: NiceAjaxExecutor
+  executor: NiceAxiosExecutor
 }
 
-export type NiceAjaxPlugin = NiceAjaxExecutor | NiceAjaxPluginConfig
+/**
+ *  * @example
+ * ```ts
+ * // 插件 1
+ * const plugin1: NiceAxiosPlugin = {
+ *  desc: '插件1',
+ *  order: 1,
+ *  executor: async (next, config) => {
+ *  // 由于一个请求的生命周期中，config 都是一个对象引用。所以这里修改后会影响之后的 config 的值
+ *  config.xx = xx
+ *  // 这里可以传新的 config，新的 config 会覆盖原来的 config。注意这里是重新赋值 oldConfig = newConfig
+ *  // next 在不断的调用下一个插件的关键
+ *  return next(newConfig)
+ *  }
+ * }
+ * ```
+ */
+export type NiceAxiosPlugin = NiceAxiosExecutor | NiceAxiosPluginConfig
 
 export interface AjaxExecutor {
   (config: NiceAxiosConfig): Promise<AjaxResponse>
 }
 
 export interface AjaxAgent {
-  add(list: NiceAjaxPlugin[]): AjaxAgent
-  attach(callback: (list: NiceAjaxPlugin[]) => ComposeResult<NiceAjaxPlugin[]>): Promise<AjaxAgent>
+  add(list: NiceAxiosPlugin[]): AjaxAgent
+  attach(
+    callback: (list: NiceAxiosPlugin[]) => ComposeResult<NiceAxiosPlugin[]>
+  ): Promise<AjaxAgent>
   exec(args: NiceAxiosConfig): Promise<AjaxResponse>
 }
 

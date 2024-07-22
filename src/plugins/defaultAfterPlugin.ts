@@ -1,17 +1,21 @@
 import type {
   ComposeResult,
   Func,
-  NiceAjaxExecutor,
+  NiceAxiosExecutor,
   NiceAxiosAfterOptions,
   NiceAxiosConfig,
-  NiceAxiosOptions,
+  NiceAxiosOptions
 } from '../types'
 
 import { AxiosError, AxiosResponse } from 'axios'
 import { errorResultNull } from '~/constants'
 import { maybeFnCall } from './utils'
 
-const handleSuccess = (res: AxiosResponse, config: NiceAxiosConfig, options?: NiceAxiosAfterOptions) => {
+const handleSuccess = (
+  res: AxiosResponse,
+  config: NiceAxiosConfig,
+  options?: NiceAxiosAfterOptions
+) => {
   // 默认
   const { meta = {} } = config
   const { isOriginalResponse = true, isOnlyUnwrapResponseData = true } = meta
@@ -33,7 +37,9 @@ const handleSuccess = (res: AxiosResponse, config: NiceAxiosConfig, options?: Ni
 
   if (!result) {
     // return '[HTTP] Request has no return value';
-    return Promise.reject(new AxiosError(errorResultNull, AxiosError.ERR_BAD_RESPONSE, res.config, res.request, res))
+    return Promise.reject(
+      new AxiosError(errorResultNull, AxiosError.ERR_BAD_RESPONSE, res.config, res.request, res)
+    )
   }
   const data = result[options?.dataFieldKey || 'data']
   const code = result[options?.codeFieldKey || 'code']
@@ -43,7 +49,9 @@ const handleSuccess = (res: AxiosResponse, config: NiceAxiosConfig, options?: Ni
   if (code === (options?.successCode || 200)) return data as AxiosResponse
 
   options?.onCatchBusinessError?.(code, message, res, config)
-  return Promise.reject(new AxiosError(message, AxiosError.ERR_BAD_RESPONSE, res.config, res.request, res))
+  return Promise.reject(
+    new AxiosError(message, AxiosError.ERR_BAD_RESPONSE, res.config, res.request, res)
+  )
 }
 
 /**
@@ -56,17 +64,22 @@ const handleSuccess = (res: AxiosResponse, config: NiceAxiosConfig, options?: Ni
  * @param config
  * @returns
  */
-const handleError = (error: AxiosError, config?: NiceAxiosConfig, options?: NiceAxiosAfterOptions) => {
+const handleError = (
+  error: AxiosError,
+  config?: NiceAxiosConfig,
+  options?: NiceAxiosAfterOptions
+) => {
   options?.onCatchAxiosError?.(error, config)
   return Promise.reject(error)
 }
 
-export const buildDefaultAfterPlugin: (options?: NiceAxiosOptions | Func<NiceAxiosOptions>) => NiceAjaxExecutor =
-  (options) => (next, config) => {
-    const initOptions = maybeFnCall(options)
+export const buildDefaultAfterPlugin: (
+  options?: NiceAxiosOptions | Func<NiceAxiosOptions>
+) => NiceAxiosExecutor = (options) => (next, config) => {
+  const initOptions = maybeFnCall(options)
 
-    return next().then(
-      (v: AxiosResponse) => handleSuccess(v, config, initOptions?.afterPluginOption),
-      (e: AxiosError) => handleError(e, config, initOptions?.afterPluginOption),
-    ) as ComposeResult<AxiosResponse>
-  }
+  return next().then(
+    (v: AxiosResponse) => handleSuccess(v, config, initOptions?.afterPluginOption),
+    (e: AxiosError) => handleError(e, config, initOptions?.afterPluginOption)
+  ) as ComposeResult<AxiosResponse>
+}

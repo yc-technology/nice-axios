@@ -1,7 +1,7 @@
 import path from 'node:path'
 import generateApi from 'swagger-typescript-api'
 import { Command } from 'commander'
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'node:url'
 const program = new Command()
 
 program

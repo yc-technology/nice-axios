@@ -1,26 +1,27 @@
 import { AxiosResponse } from 'axios'
 import { expect, test } from 'vitest'
 import { createNiceAxios } from '~/instance'
-import { NiceAjaxExecutor, NiceAjaxPluginConfig, ComposePlugin } from '~/types'
+import { NiceAxiosExecutor, NiceAxiosPluginConfig, ComposePlugin } from '~/types'
 import { compose } from '~/utils/compose'
 
 test('test reduce right', () => {
   // 定义转换函数作为插件
-  const toUpperCasePlugin: ComposePlugin<string, string> = (next, options) => next(options.toUpperCase())
+  const toUpperCasePlugin: ComposePlugin<string, string> = (next, options) =>
+    next(options.toUpperCase())
   const exclaimPlugin: ComposePlugin<string, string> = (next, options) => next(options + '!')
 
   // 创建compose实例，并应用转换
   const transformText = compose(
     (text) => text, // 默认动作，即初始处理函数
     toUpperCasePlugin,
-    exclaimPlugin,
+    exclaimPlugin
   )
 
   expect(transformText.exec('hello')).toBe('HELLO!')
 })
 
 test('test fetch date', async () => {
-  const addTokenPlugin: NiceAjaxExecutor = async (next, config) => {
+  const addTokenPlugin: NiceAxiosExecutor = async (next, config) => {
     // Execute before request
     const token = 'test-token'
     if (config?.headers) {
@@ -33,14 +34,14 @@ test('test fetch date', async () => {
     })
   }
 
-  const plugins: NiceAjaxPluginConfig[] = [
+  const plugins: NiceAxiosPluginConfig[] = [
     // generate plugin instance
     {
       // When the value is approximately small, the observer will be executed earlier before the request. On the contrary, the larger the value, the earlier the observer will be executed after the request.
       order: -100,
       executor: addTokenPlugin,
-      desc: 'add token',
-    },
+      desc: 'add token'
+    }
   ]
 
   const niceAxios = createNiceAxios({}, plugins)
@@ -57,7 +58,7 @@ test('test default add token config', async () => {
     headerAuthFieldKey: 'xxx-TOKEN',
     getToken: () => {
       return 'test-token'
-    },
+    }
   })
   const res = await niceAxios.get<AxiosResponse<string>>('https://httpd.apache.org/', {
     // meta: { allReturn: true },

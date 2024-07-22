@@ -4,9 +4,9 @@ import type {
   AjaxAgent,
   NiceAxiosConfig,
   NiceAxiosConfigMeta,
-  NiceAjaxPlugin,
+  NiceAxiosPlugin,
   ComplexObject,
-  ComposeResult,
+  ComposeResult
 } from './types'
 import { AxiosResponse } from 'axios'
 import { AjaxMethods } from './constants'
@@ -26,37 +26,50 @@ export class NiceAxios {
   private $agent: AjaxAgent
   $canceler: AxiosCanceler = new AxiosCanceler()
 
-  constructor(plugins: NiceAjaxPlugin[] = []) {
+  constructor(plugins: NiceAxiosPlugin[] = []) {
     this.$agent = ajax(plugins)
   }
 
-  request<T = AxiosResponse>(option: NiceAxiosConfig = {}, plugins: NiceAjaxPlugin[] = []): Promise<T> {
+  request<T = AxiosResponse>(
+    option: NiceAxiosConfig = {},
+    plugins: NiceAxiosPlugin[] = []
+  ): Promise<T> {
     const { data, body, ...reset } = option
     return this.$agent
       .attach((list) => (plugins.length ? list.concat(plugins) : list))
-      .then((v) => v.exec({ ...reset, data: body || data, $canceler: this.$canceler })) as Promise<T>
+      .then((v) =>
+        v.exec({ ...reset, data: body || data, $canceler: this.$canceler })
+      ) as Promise<T>
   }
 
-  get<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAjaxPlugin[]) {
+  get<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAxiosPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.GET, url }, plugins)
   }
 
-  delete<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAjaxPlugin[]) {
+  delete<T = AxiosResponse>(
+    url: string,
+    option: NiceAxiosConfig = {},
+    ...plugins: NiceAxiosPlugin[]
+  ) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.DELETE, url }, plugins)
   }
 
-  put<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAjaxPlugin[]) {
+  put<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAxiosPlugin[]) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.PUT, url }, plugins)
   }
 
-  post<T = AxiosResponse>(url: string, option: NiceAxiosConfig = {}, ...plugins: NiceAjaxPlugin[]) {
+  post<T = AxiosResponse>(
+    url: string,
+    option: NiceAxiosConfig = {},
+    ...plugins: NiceAxiosPlugin[]
+  ) {
     return this.request<T>({ ...getOption(option), method: AjaxMethods.POST, url }, plugins)
   }
 
   upload<T = AxiosResponse>(url: string, data: ComplexObject = {}, meta: NiceAxiosConfigMeta = {}) {
     return this.post<T>(url, {
       data,
-      meta: { upload: true, aes: false, ...meta },
+      meta: { upload: true, aes: false, ...meta }
     })
   }
 
@@ -64,11 +77,13 @@ export class NiceAxios {
     return this.post<T>(url, {
       responseType: 'blob',
       data,
-      meta: { isTransformRequestResult: false, ...meta },
+      meta: { isTransformRequestResult: false, ...meta }
     })
   }
 
-  async attach(callback: ((list: NiceAjaxPlugin[]) => ComposeResult<NiceAjaxPlugin[]>) | NiceAjaxPlugin[]) {
+  async attach(
+    callback: ((list: NiceAxiosPlugin[]) => ComposeResult<NiceAxiosPlugin[]>) | NiceAxiosPlugin[]
+  ) {
     if (isArray(callback)) {
       if (callback.length) {
         // 构建新的插件列表
