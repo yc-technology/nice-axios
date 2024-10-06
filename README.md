@@ -1,5 +1,10 @@
 # NiceAxios
 
+<div align="center">
+
+[![onion-model-image](/docs/public/logo.svg)](/docs/public/logo.svg)
+
+</div>
 <p align="center">
   <a href="https://www.npmjs.com/package/nice-axios"><img src="https://badgen.net/npm/v/nice-axios" alt="npm package">
   </a>
